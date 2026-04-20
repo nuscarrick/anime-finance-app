@@ -7,10 +7,12 @@ import {
   inject,
 } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Location } from '@angular/common';
 import { IonContent, IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { trendingUpOutline, trendingDownOutline } from 'ionicons/icons';
+import { trendingUpOutline, trendingDownOutline, arrowBackOutline, logOutOutline } from 'ionicons/icons';
+import { AuthService } from '../../core/services/auth.service';
 import { FinanceService } from '../../core/services/finance.service';
 import { CurrencyRate } from '../../core/models/finance.model';
 
@@ -24,7 +26,12 @@ import { CurrencyRate } from '../../core/models/finance.model';
 })
 export class CurrencyComponent implements OnInit {
   finance = inject(FinanceService);
+  auth = inject(AuthService);
   route = inject(ActivatedRoute);
+  router = inject(Router);
+  location = inject(Location);
+
+  showMenu = signal(false);
 
   currencies = this.finance.currencies;
   selected = signal<CurrencyRate>(this.finance.currencies()[0]);
@@ -37,7 +44,7 @@ export class CurrencyComponent implements OnInit {
   chartFillPath = computed(() => this.buildFillPath(this.selected().chartData, 200, 60));
 
   constructor() {
-    addIcons({ trendingUpOutline, trendingDownOutline });
+    addIcons({ trendingUpOutline, trendingDownOutline, arrowBackOutline, logOutOutline });
   }
 
   ngOnInit() {
@@ -46,6 +53,13 @@ export class CurrencyComponent implements OnInit {
     if (label && amount) {
       this.fromCard.set({ label, amount: parseFloat(amount) });
     }
+  }
+
+  goBack() { this.location.back(); }
+
+  signOut() {
+    this.auth.logout();
+    this.router.navigate(['/login']);
   }
 
   selectCurrency(c: CurrencyRate) {
