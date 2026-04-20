@@ -27,9 +27,9 @@ import { AuthService } from '../../core/services/auth.service';
            style="background: linear-gradient(135deg, #0f0f1a 0%, #16162a 50%, #1a0f2e 100%)">
 
         <!-- Background orbs -->
-        <div class="absolute top-1/4 left-1/4 w-64 h-64 rounded-full opacity-10 blur-3xl"
+        <div class="absolute top-1/4 left-1/4 w-64 h-64 rounded-full opacity-10 blur-3xl pointer-events-none"
              style="background: #6c63ff; animation: float 6s ease-in-out infinite;"></div>
-        <div class="absolute bottom-1/4 right-1/4 w-48 h-48 rounded-full opacity-10 blur-3xl"
+        <div class="absolute bottom-1/4 right-1/4 w-48 h-48 rounded-full opacity-10 blur-3xl pointer-events-none"
              style="background: #ff6584; animation: float 8s ease-in-out infinite reverse;"></div>
 
         <div class="w-full max-w-sm page-enter">
