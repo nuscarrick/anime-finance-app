@@ -57,7 +57,8 @@ import { AuthService } from '../../core/services/auth.service';
                   style="color: #6c63ff; font-size: 18px;"></ion-icon>
                 <input
                   type="text"
-                  [(ngModel)]="username"
+                  [ngModel]="username()"
+                  (ngModelChange)="username.set($event)"
                   placeholder="emilys"
                   class="w-full pl-10 pr-4 py-3 rounded-xl text-white text-sm outline-none transition-all"
                   style="background: rgba(30,30,53,0.9); border: 1px solid rgba(108,99,255,0.2); color: white;"
@@ -76,7 +77,8 @@ import { AuthService } from '../../core/services/auth.service';
                   style="color: #6c63ff; font-size: 18px;"></ion-icon>
                 <input
                   [type]="showPassword() ? 'text' : 'password'"
-                  [(ngModel)]="password"
+                  [ngModel]="password()"
+                  (ngModelChange)="password.set($event)"
                   placeholder="••••••••"
                   class="w-full pl-10 pr-10 py-3 rounded-xl text-sm outline-none transition-all"
                   style="background: rgba(30,30,53,0.9); border: 1px solid rgba(108,99,255,0.2); color: white;"
@@ -139,14 +141,14 @@ import { AuthService } from '../../core/services/auth.service';
   `,
 })
 export class LoginComponent {
-  username = '';
-  password = '';
+  username = signal('');
+  password = signal('');
   loading = signal(false);
   error = signal('');
   showPassword = signal(false);
   pressing = signal(false);
 
-  canSubmit = computed(() => this.username.length > 0 && this.password.length > 0);
+  canSubmit = computed(() => this.username().length > 0 && this.password().length > 0);
 
   constructor(private auth: AuthService, private router: Router) {
     addIcons({ eyeOutline, eyeOffOutline, lockClosedOutline, personOutline });
@@ -173,7 +175,7 @@ export class LoginComponent {
     this.loading.set(true);
     this.error.set('');
 
-    this.auth.login({ username: this.username, password: this.password }).subscribe({
+    this.auth.login({ username: this.username(), password: this.password() }).subscribe({
       next: () => {
         this.loading.set(false);
         this.router.navigate(['/app/home']);
