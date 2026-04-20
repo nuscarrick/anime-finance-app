@@ -1,0 +1,120 @@
+<ion-content>
+  <div class="min-h-full pb-24 slide-from-right" style="background: #0f0f1a;">
+
+    <!-- Header -->
+    <div class="px-5 pt-12 pb-6">
+      <p class="text-xs font-medium mb-1" style="color: #8b8bad;">OVERVIEW</p>
+      <h1 class="text-2xl font-bold text-white">Analytics</h1>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="px-5 mb-5">
+      <div class="grid grid-cols-3 gap-3">
+        <div class="glass-card p-3 text-center">
+          <p class="text-xs mb-1" style="color: #8b8bad;">Income</p>
+          <p class="text-base font-bold" style="color: #43e97b;">
+            ${{ analytics().totalIncome | number: '1.0-0' }}
+          </p>
+        </div>
+        <div class="glass-card p-3 text-center">
+          <p class="text-xs mb-1" style="color: #8b8bad;">Expense</p>
+          <p class="text-base font-bold" style="color: #ff6584;">
+            ${{ analytics().totalExpense | number: '1.0-0' }}
+          </p>
+        </div>
+        <div class="glass-card p-3 text-center">
+          <p class="text-xs mb-1" style="color: #8b8bad;">Net</p>
+          <p class="text-base font-bold" style="color: #6c63ff;">
+            ${{ analytics().netBalance | number: '1.0-0' }}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Donut Chart -->
+    <div class="px-5 mb-5">
+      <div class="glass-card p-5">
+        <p class="text-sm font-medium text-white mb-4">Expense Breakdown</p>
+        <div class="flex items-center gap-5">
+          <!-- SVG Donut -->
+          <div class="relative flex-shrink-0">
+            <svg viewBox="0 0 120 120" class="w-32 h-32 -rotate-90">
+              @for (seg of donutSegments(); track $index) {
+                <circle
+                  cx="60" cy="60" r="40"
+                  fill="none"
+                  [attr.stroke]="seg.color"
+                  stroke-width="16"
+                  [attr.stroke-dasharray]="seg.dash"
+                  [attr.stroke-dashoffset]="seg.offset"
+                  stroke-linecap="butt"
+                  style="transition: stroke-dasharray 0.8s ease;">
+                </circle>
+              }
+            </svg>
+            <div class="absolute inset-0 flex flex-col items-center justify-center">
+              <p class="text-lg font-bold text-white">{{ totalExpensePct() }}%</p>
+              <p class="text-xs" style="color: #8b8bad;">used</p>
+            </div>
+          </div>
+
+          <!-- Legend -->
+          <div class="flex flex-col gap-2 flex-1">
+            @for (cat of analytics().categories; track cat.name) {
+              <div class="flex items-center gap-2">
+                <div class="w-2.5 h-2.5 rounded-full flex-shrink-0" [style.background]="cat.color"></div>
+                <span class="text-xs text-white flex-1">{{ cat.name }}</span>
+                <span class="text-xs font-semibold" style="color: #8b8bad;">{{ cat.percentage }}%</span>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Category Breakdown Bars -->
+    <div class="px-5 mb-5">
+      <div class="glass-card p-4">
+        <p class="text-sm font-medium text-white mb-4">By Category</p>
+        <div class="flex flex-col gap-4">
+          @for (cat of analytics().categories; track cat.name) {
+            <div>
+              <div class="flex justify-between mb-1.5">
+                <span class="text-sm text-white">{{ cat.name }}</span>
+                <span class="text-sm font-semibold" style="color: #8b8bad;">
+                  ${{ cat.amount | number: '1.0-0' }}
+                </span>
+              </div>
+              <div class="h-2 rounded-full overflow-hidden" style="background: rgba(30,30,53,0.8);">
+                <div class="h-full rounded-full bar-animate"
+                     [style.width.%]="cat.percentage"
+                     [style.background]="cat.color">
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Weekly Spend Trend -->
+    <div class="px-5">
+      <div class="glass-card p-4">
+        <p class="text-sm font-medium text-white mb-4">Weekly Spend</p>
+        <div class="flex items-end gap-2 h-20">
+          @for (day of weeklyData(); track $index) {
+            <div class="flex-1 flex flex-col items-center gap-1">
+              <div class="w-full rounded-t-md bar-animate"
+                   [style.height.%]="(day.value / maxWeekly()) * 100"
+                   [style.background]="day.active ? '#6c63ff' : 'rgba(108,99,255,0.2)'"
+                   style="min-height: 4px;">
+              </div>
+              <span class="text-xs" style="color: #8b8bad;">{{ day.label }}</span>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+
+  </div>
+</ion-content>

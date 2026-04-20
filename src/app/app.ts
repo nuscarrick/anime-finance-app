@@ -1,12 +1,10 @@
-import { Component, signal } from '@angular/core';
+import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { IonApp } from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
-  templateUrl: './app.html',
-  styleUrl: './app.css'
+  imports: [RouterOutlet, IonApp],
+  template: `<ion-app><router-outlet /></ion-app>`,
 })
-export class App {
-  protected readonly title = signal('anime-finance-app');
-}
+export class App {}

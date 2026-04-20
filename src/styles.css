@@ -1,1 +1,188 @@
-/* You can add global styles to this file, and also import other style files */
+@import "tailwindcss";
+@import "@ionic/angular/css/core.css";
+@import "@ionic/angular/css/normalize.css";
+@import "@ionic/angular/css/structure.css";
+@import "@ionic/angular/css/typography.css";
+@import "@ionic/angular/css/display.css";
+
+@layer base {
+  :root {
+    --color-bg-primary: #0f0f1a;
+    --color-bg-secondary: #16162a;
+    --color-bg-card: #1e1e35;
+    --color-accent: #6c63ff;
+    --color-accent-2: #ff6584;
+    --color-text-primary: #ffffff;
+    --color-text-secondary: #8b8bad;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    background-color: var(--color-bg-primary);
+    color: var(--color-text-primary);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+
+  ion-app {
+    background: var(--color-bg-primary);
+  }
+
+  ion-content {
+    --background: var(--color-bg-primary);
+  }
+}
+
+@layer utilities {
+  .glass-card {
+    background: rgba(30, 30, 53, 0.8);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(108, 99, 255, 0.15);
+    border-radius: 1rem;
+  }
+
+  .gradient-accent {
+    background: linear-gradient(135deg, #6c63ff 0%, #a855f7 100%);
+  }
+
+  .gradient-card-1 {
+    background: linear-gradient(135deg, #6c63ff 0%, #8b7cf8 100%);
+  }
+
+  .gradient-card-2 {
+    background: linear-gradient(135deg, #ff6584 0%, #ff8fa3 100%);
+  }
+
+  .text-gradient {
+    background: linear-gradient(135deg, #6c63ff, #a855f7);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+}
+
+/* Page transition animations */
+.page-enter {
+  animation: pageSlideIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+.page-leave {
+  animation: pageSlideOut 0.3s cubic-bezier(0.55, 0, 1, 0.45) forwards;
+}
+
+@keyframes pageSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes pageSlideOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+}
+
+/* Skeleton loading animation */
+@keyframes shimmer {
+  0% { background-position: -200px 0; }
+  100% { background-position: calc(200px + 100%) 0; }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #1e1e35 25%, #2a2a45 50%, #1e1e35 75%);
+  background-size: 400px 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 0.5rem;
+}
+
+/* Chart bar animation */
+@keyframes growBar {
+  from { transform: scaleY(0); transform-origin: bottom; }
+  to { transform: scaleY(1); transform-origin: bottom; }
+}
+
+.bar-animate {
+  animation: growBar 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* Pulse glow */
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 8px rgba(108, 99, 255, 0.4); }
+  50% { box-shadow: 0 0 20px rgba(108, 99, 255, 0.8); }
+}
+
+.pulse-glow {
+  animation: pulseGlow 2s ease-in-out infinite;
+}
+
+/* Slide tab animations */
+@keyframes slideFromLeft {
+  from { opacity: 0; transform: translateX(-30px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slideFromRight {
+  from { opacity: 0; transform: translateX(30px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.slide-from-left {
+  animation: slideFromLeft 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+.slide-from-right {
+  animation: slideFromRight 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: #1e1e35;
+}
+::-webkit-scrollbar-thumb {
+  background: #6c63ff;
+  border-radius: 2px;
+}
+
+/* Ion overrides */
+ion-tab-bar {
+  --background: #16162a;
+  --border: 1px solid rgba(108, 99, 255, 0.15);
+}
+
+ion-tab-button {
+  --color: #8b8bad;
+  --color-selected: #6c63ff;
+}
+
+ion-range {
+  --bar-background: #2a2a45;
+  --bar-background-active: #6c63ff;
+  --knob-background: #6c63ff;
+  --knob-box-shadow: 0 0 8px rgba(108, 99, 255, 0.6);
+}
+
+ion-input {
+  --background: #1e1e35;
+  --color: #ffffff;
+  --placeholder-color: #8b8bad;
+  --border-radius: 12px;
+  --padding-start: 16px;
+  --padding-end: 16px;
+}
