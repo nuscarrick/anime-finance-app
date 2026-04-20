@@ -10,7 +10,6 @@ import { Location } from '@angular/common';
 import { IonContent, IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { settingsOutline, arrowBackOutline } from 'ionicons/icons';
-import { AuthService } from '../../core/services/auth.service';
 import { FinanceService } from '../../core/services/finance.service';
 
 @Component({
@@ -23,10 +22,8 @@ import { FinanceService } from '../../core/services/finance.service';
 })
 export class AnalyticsComponent {
   finance = inject(FinanceService);
-  auth = inject(AuthService);
   location = inject(Location);
 
-  user = this.auth.user;
   analytics = this.finance.analytics;
 
   selectedTab = signal(0);

@@ -26,23 +26,9 @@
     <div class="px-5">
       <div class="glass-card p-5">
 
-        <!-- Avatar + Donut row -->
-        <div class="flex items-center justify-around mb-5">
-
-          <!-- Avatar -->
-          @defer (on idle) {
-            <div class="relative flex-shrink-0">
-              <img [src]="user()?.image || 'https://dummyjson.com/icon/emilys/128'"
-                   class="w-20 h-20 rounded-full object-cover"
-                   style="border: 3px solid #1a73e8; box-shadow: 0 0 0 5px rgba(26,115,232,0.12);"
-                   alt="avatar" />
-            </div>
-          } @placeholder {
-            <div class="skeleton w-20 h-20 rounded-full flex-shrink-0"></div>
-          }
-
-          <!-- Donut chart -->
-          <div class="relative flex-shrink-0" style="width:110px; height:110px;">
+        <!-- Donut chart -->
+        <div class="flex justify-center mb-5">
+          <div class="relative flex-shrink-0" style="width:140px; height:140px;">
             <svg viewBox="0 0 120 120" class="w-full h-full -rotate-90">
               @for (seg of donutSegments(); track $index) {
                 <circle cx="60" cy="60" r="40"
@@ -60,7 +46,6 @@
               <p class="text-base font-black" style="color:#1e2d5a;">{{ totalExpensePct() }}%</p>
               <p class="text-xs font-medium" style="color:#94a8c5;">used</p>
             </div>
-          </div>
         </div>
 
         <!-- Selected category info -->
