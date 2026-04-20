@@ -10,7 +10,6 @@ import { cashOutline, homeOutline, barChartOutline } from 'ionicons/icons';
   imports: [IonRouterOutlet, IonTabs, IonTabBar, IonTabButton, IonIcon, IonLabel],
   template: `
     <ion-tabs>
-      <ion-router-outlet></ion-router-outlet>
       <ion-tab-bar slot="bottom">
         <ion-tab-button tab="currency" href="/app/currency">
           <ion-icon name="cash-outline"></ion-icon>
