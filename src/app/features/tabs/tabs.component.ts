@@ -1,25 +1,16 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
-import {
-  IonTabs,
-  IonTabBar,
-  IonTabButton,
-  IonIcon,
-  IonLabel,
-} from '@ionic/angular/standalone';
+import { IonRouterOutlet, IonTabs, IonTabBar, IonTabButton, IonIcon, IonLabel } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import {
-  cashOutline,
-  homeOutline,
-  barChartOutline,
-} from 'ionicons/icons';
+import { cashOutline, homeOutline, barChartOutline } from 'ionicons/icons';
 
 @Component({
   selector: 'app-tabs',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [IonTabs, IonTabBar, IonTabButton, IonIcon, IonLabel],
+  imports: [IonRouterOutlet, IonTabs, IonTabBar, IonTabButton, IonIcon, IonLabel],
   template: `
     <ion-tabs>
+      <ion-router-outlet></ion-router-outlet>
       <ion-tab-bar slot="bottom">
         <ion-tab-button tab="currency" href="/app/currency">
           <ion-icon name="cash-outline"></ion-icon>
