@@ -4,7 +4,6 @@ import {
   computed,
   ChangeDetectionStrategy,
 } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import {
   IonContent,
@@ -20,7 +19,7 @@ import { AuthService } from '../../core/services/auth.service';
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'ion-page' },
-  imports: [FormsModule, IonContent, IonSpinner, IonIcon],
+  imports: [IonContent, IonSpinner, IonIcon],
   template: `
     <ion-content>
       <div class="min-h-screen flex items-center justify-center px-4 relative overflow-hidden"
@@ -58,8 +57,8 @@ import { AuthService } from '../../core/services/auth.service';
                   style="color: #6c63ff; font-size: 18px;"></ion-icon>
                 <input
                   type="text"
-                  [ngModel]="username()"
-                  (ngModelChange)="username.set($event)"
+                  [value]="username()"
+                  (input)="username.set($any($event.target).value)"
                   placeholder="emilys"
                   class="w-full pl-10 pr-4 py-3 rounded-xl text-white text-sm outline-none transition-all"
                   style="background: rgba(30,30,53,0.9); border: 1px solid rgba(108,99,255,0.2); color: white;"
@@ -78,8 +77,8 @@ import { AuthService } from '../../core/services/auth.service';
                   style="color: #6c63ff; font-size: 18px;"></ion-icon>
                 <input
                   [type]="showPassword() ? 'text' : 'password'"
-                  [ngModel]="password()"
-                  (ngModelChange)="password.set($event)"
+                  [value]="password()"
+                  (input)="password.set($any($event.target).value)"
                   placeholder="••••••••"
                   class="w-full pl-10 pr-10 py-3 rounded-xl text-sm outline-none transition-all"
                   style="background: rgba(30,30,53,0.9); border: 1px solid rgba(108,99,255,0.2); color: white;"
