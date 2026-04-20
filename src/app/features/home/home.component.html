@@ -1,24 +1,54 @@
 <ion-content>
+  <!-- Tap outside to close menu -->
+  @if (showMenu()) {
+    <div class="fixed inset-0 z-40" (click)="showMenu.set(false)"></div>
+  }
+
   <div class="bg-app pb-28 page-enter">
 
-    <!-- Header -->
+    <!-- Header: logo + user info | "..." menu -->
     <div class="flex items-center justify-between px-5 pt-12 pb-4">
-      <div>
-        <p class="text-xs font-medium" style="color:#94a8c5;">Good {{ greeting() }},</p>
-        <p class="text-lg font-bold" style="color:#1e2d5a;">{{ user()?.firstName || 'User' }} {{ user()?.lastName || '' }}</p>
-      </div>
-      @defer (on idle) {
-        <div class="relative">
-          <img [src]="user()?.image || 'https://dummyjson.com/icon/emilys/128'"
-               class="w-12 h-12 rounded-full object-cover"
-               style="border: 2.5px solid #1a73e8; box-shadow: 0 0 0 4px rgba(26,115,232,0.15);"
-               alt="avatar" />
-          <div class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-green-400"
-               style="border: 2px solid white;"></div>
+      <!-- Left: avatar + name -->
+      <div class="flex items-center gap-3">
+        @defer (on idle) {
+          <div class="relative">
+            <img [src]="user()?.image || 'https://dummyjson.com/icon/emilys/128'"
+                 class="w-11 h-11 rounded-full object-cover"
+                 style="border: 2.5px solid #1a73e8; box-shadow: 0 0 0 4px rgba(26,115,232,0.15);"
+                 alt="avatar" />
+            <div class="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-green-400"
+                 style="border: 2px solid white;"></div>
+          </div>
+        } @placeholder {
+          <div class="skeleton w-11 h-11 rounded-full"></div>
+        }
+        <div>
+          <p class="text-xs font-medium" style="color:#94a8c5;">Good {{ greeting() }},</p>
+          <p class="text-sm font-bold" style="color:#1e2d5a;">{{ user()?.firstName || 'User' }} {{ user()?.lastName || '' }}</p>
         </div>
-      } @placeholder {
-        <div class="skeleton w-12 h-12 rounded-full"></div>
-      }
+      </div>
+
+      <!-- Right: "..." menu -->
+      <div class="relative z-50">
+        <button
+          (click)="showMenu.set(!showMenu())"
+          class="w-9 h-9 rounded-full flex items-center justify-center font-bold text-lg transition-all"
+          style="background:rgba(255,255,255,0.8); color:#1e2d5a; letter-spacing:1px; box-shadow:0 2px 8px rgba(26,115,232,0.1);">
+          ···
+        </button>
+        @if (showMenu()) {
+          <div class="absolute right-0 top-11 rounded-2xl overflow-hidden"
+               style="background:white; box-shadow:0 8px 24px rgba(26,115,232,0.15); min-width:140px; border:1px solid rgba(26,115,232,0.08);">
+            <button
+              (click)="signOut()"
+              class="w-full px-4 py-3 text-left text-sm font-semibold transition-all hover:bg-blue-50 flex items-center gap-2"
+              style="color:#f44336;">
+              <ion-icon name="log-out-outline" style="font-size:16px;"></ion-icon>
+              Sign Out
+            </button>
+          </div>
+        }
+      </div>
     </div>
 
     <!-- Total Portfolio -->
@@ -67,70 +97,58 @@
       </div>
     </div>
 
-    <!-- Vertical comparison chart -->
+    <!-- Vertical sliders comparison -->
     <div class="px-5 mb-5">
       <div class="glass-card p-4">
-        <div class="flex items-stretch gap-3" style="height:160px;">
+        <div class="flex items-stretch gap-2" style="height:200px;">
 
-          <!-- Scale labels left -->
-          <div class="flex flex-col justify-between items-end pt-5 pb-1" style="width:36px;">
+          <!-- Scale left -->
+          <div class="flex flex-col justify-between items-end py-2" style="width:38px;">
             @for (m of scaleMarks; track m) {
-              <span class="text-xs leading-none" style="color:#94a8c5;">{{ m }}</span>
+              <span class="text-xs" style="color:#94a8c5;">{{ m }}</span>
             }
           </div>
 
-          <!-- Bar card-1 -->
-          <div class="flex-1 flex flex-col items-center gap-1">
-            <p class="text-xs font-semibold truncate w-full text-center" style="color:#1e2d5a;">{{ cards()[0]?.label }}</p>
-            <div class="flex-1 w-full rounded-xl overflow-hidden relative" style="background:rgba(26,115,232,0.1);">
-              <div class="absolute bottom-0 left-0 right-0 rounded-xl bar-animate"
-                   style="background:linear-gradient(180deg,#5b9ef7,#1a73e8); transition: height 0.7s ease;"
-                   [style.height.%]="((cards()[0]?.amount ?? 0) / 2100) * 100">
-              </div>
+          <!-- Slider 1 -->
+          <div class="flex-1 flex flex-col items-center gap-1 py-2">
+            <p class="text-xs font-semibold text-center truncate w-full" style="color:#1e2d5a;">
+              {{ cards()[0]?.label }}
+            </p>
+            <div class="flex-1 flex items-center justify-center">
+              <input
+                type="range"
+                [value]="slider1()"
+                (input)="slider1.set(+$any($event.target).value)"
+                min="100" max="2000" step="50"
+                class="vertical-range-input"
+                style="writing-mode:vertical-lr; direction:rtl; -webkit-appearance:slider-vertical; appearance:slider-vertical; height:130px; width:28px; cursor:pointer; accent-color:#1a73e8;"
+              />
             </div>
+            <p class="text-xs font-bold" style="color:#1a73e8;">${{ slider1() | number:'1.0-0' }}</p>
           </div>
 
-          <!-- Bar card-2 -->
-          <div class="flex-1 flex flex-col items-center gap-1">
-            <p class="text-xs font-semibold truncate w-full text-center" style="color:#1e2d5a;">{{ cards()[1]?.label }}</p>
-            <div class="flex-1 w-full rounded-xl overflow-hidden relative" style="background:rgba(244,67,54,0.1);">
-              <div class="absolute bottom-0 left-0 right-0 rounded-xl bar-animate"
-                   style="background:linear-gradient(180deg,#ff7c6e,#f44336); transition: height 0.7s ease;"
-                   [style.height.%]="((cards()[1]?.amount ?? 0) / 2100) * 100">
-              </div>
+          <!-- Slider 2 -->
+          <div class="flex-1 flex flex-col items-center gap-1 py-2">
+            <p class="text-xs font-semibold text-center truncate w-full" style="color:#1e2d5a;">
+              {{ cards()[1]?.label }}
+            </p>
+            <div class="flex-1 flex items-center justify-center">
+              <input
+                type="range"
+                [value]="slider2()"
+                (input)="slider2.set(+$any($event.target).value)"
+                min="100" max="2000" step="50"
+                style="writing-mode:vertical-lr; direction:rtl; -webkit-appearance:slider-vertical; appearance:slider-vertical; height:130px; width:28px; cursor:pointer; accent-color:#f44336;"
+              />
             </div>
+            <p class="text-xs font-bold" style="color:#f44336;">${{ slider2() | number:'1.0-0' }}</p>
           </div>
 
-          <!-- Scale labels right -->
-          <div class="flex flex-col justify-between items-start pt-5 pb-1" style="width:36px;">
+          <!-- Scale right -->
+          <div class="flex flex-col justify-between items-start py-2" style="width:38px;">
             @for (m of scaleMarks; track m) {
-              <span class="text-xs leading-none" style="color:#94a8c5;">{{ m }}</span>
+              <span class="text-xs" style="color:#94a8c5;">{{ m }}</span>
             }
-          </div>
-        </div>
-
-        <!-- Values row -->
-        <div class="flex gap-3 mt-2 px-10">
-          <div class="flex-1 text-center">
-            <span class="text-sm font-bold" style="color:#1a73e8;">${{ cards()[0]?.amount | number:'1.0-0' }}</span>
-          </div>
-          <div class="flex-1 text-center">
-            <span class="text-sm font-bold" style="color:#f44336;">${{ cards()[1]?.amount | number:'1.0-0' }}</span>
-          </div>
-        </div>
-
-        <!-- Allocation slider -->
-        <div class="mt-3">
-          <ion-range
-            [value]="sliderValue()"
-            (ionChange)="onSliderChange($event)"
-            [min]="0" [max]="100" [step]="1"
-            class="px-0">
-          </ion-range>
-          <div class="flex justify-between text-xs" style="color:#94a8c5;">
-            <span>Conservative</span>
-            <span class="font-bold" style="color:#1a73e8;">{{ sliderValue() }}%</span>
-            <span>Aggressive</span>
           </div>
         </div>
       </div>

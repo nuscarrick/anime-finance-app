@@ -14,10 +14,10 @@ import { map } from 'rxjs/operators';
 import { IonContent, IonRange, IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
-  notificationsOutline,
   trendingUpOutline,
   trendingDownOutline,
   arrowForwardOutline,
+  logOutOutline,
 } from 'ionicons/icons';
 import { AuthService } from '../../core/services/auth.service';
 import { FinanceService } from '../../core/services/finance.service';
@@ -51,6 +51,9 @@ export class HomeComponent {
     return 'evening';
   });
 
+  showMenu = signal(false);
+  slider1 = signal(1600);
+  slider2 = signal(2100);
   scaleMarks = [2000, 1500, 1000, 500, 100];
 
   monthlyData = signal([
@@ -69,7 +72,7 @@ export class HomeComponent {
   ]);
 
   constructor() {
-    addIcons({ notificationsOutline, trendingUpOutline, trendingDownOutline, arrowForwardOutline });
+    addIcons({ trendingUpOutline, trendingDownOutline, arrowForwardOutline, logOutOutline });
   }
 
   onSliderChange(event: CustomEvent) {
@@ -83,6 +86,11 @@ export class HomeComponent {
   }
 
   onTransfer() {
-    this.router.navigate(['/app/currency']);
+    alert('trigger CTA');
+  }
+
+  signOut() {
+    this.auth.logout();
+    this.router.navigate(['/login']);
   }
 }
