@@ -59,11 +59,14 @@ import { AuthService } from '../../core/services/auth.service';
                   type="text"
                   [value]="username()"
                   (input)="username.set($any($event.target).value)"
+                  (change)="username.set($any($event.target).value)"
                   placeholder="emilys"
+                  autocomplete="username"
                   class="w-full pl-10 pr-4 py-3 rounded-xl text-white text-sm outline-none transition-all"
                   style="background: rgba(30,30,53,0.9); border: 1px solid rgba(108,99,255,0.2); color: white;"
                   (focus)="onFocus($event)"
                   (blur)="onBlur($event)"
+                  (keydown.enter)="onLogin()"
                 />
               </div>
             </div>
@@ -79,11 +82,14 @@ import { AuthService } from '../../core/services/auth.service';
                   [type]="showPassword() ? 'text' : 'password'"
                   [value]="password()"
                   (input)="password.set($any($event.target).value)"
+                  (change)="password.set($any($event.target).value)"
                   placeholder="••••••••"
+                  autocomplete="current-password"
                   class="w-full pl-10 pr-10 py-3 rounded-xl text-sm outline-none transition-all"
                   style="background: rgba(30,30,53,0.9); border: 1px solid rgba(108,99,255,0.2); color: white;"
                   (focus)="onFocus($event)"
                   (blur)="onBlur($event)"
+                  (keydown.enter)="onLogin()"
                 />
                 <button
                   (click)="togglePassword()"
