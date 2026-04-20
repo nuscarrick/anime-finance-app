@@ -1,58 +1,61 @@
 <ion-content>
-  <div class="min-h-full pb-24 slide-from-left" style="background: #0f0f1a;">
+  <div class="bg-app pb-28 slide-from-left">
 
     <!-- Header -->
-    <div class="px-5 pt-12 pb-6">
-      <p class="text-xs font-medium mb-1" style="color: #8b8bad;">EXCHANGE RATES</p>
-      <h1 class="text-2xl font-bold text-white">Currency Market</h1>
+    <div class="px-5 pt-12 pb-4">
+      <p class="text-xs font-semibold uppercase tracking-wider mb-1" style="color:#94a8c5;">Exchange Rates</p>
+      <h1 class="text-2xl font-black" style="color:#1e2d5a;">Currency Market</h1>
       @if (fromCard()) {
-        <div class="mt-2 px-3 py-1.5 rounded-lg inline-flex items-center gap-2"
-             style="background: rgba(108,99,255,0.15); border: 1px solid rgba(108,99,255,0.3);">
-          <span class="text-sm" style="color: #6c63ff;">From: {{ fromCard()!.label }}</span>
-          <span class="text-sm font-bold" style="color: #6c63ff;">${{ fromCard()!.amount | number: '1.0-0' }}</span>
+        <div class="mt-2 inline-flex items-center gap-2 px-3 py-1.5 rounded-xl"
+             style="background:rgba(26,115,232,0.1); border:1px solid rgba(26,115,232,0.2);">
+          <span class="text-sm font-semibold" style="color:#1a73e8;">From: {{ fromCard()!.label }}</span>
+          <span class="text-sm font-bold" style="color:#1a73e8;">${{ fromCard()!.amount | number:'1.0-0' }}</span>
         </div>
       }
     </div>
 
-    <!-- Selected Currency Chart -->
+    <!-- Selected currency chart card -->
     <div class="px-5 mb-5">
       <div class="glass-card p-4">
         <div class="flex items-center justify-between mb-1">
-          <div>
-            <span class="text-xl font-bold text-white">{{ selected().code }}</span>
-            <span class="text-sm ml-2" style="color: #8b8bad;">{{ selected().name }}</span>
+          <div class="flex items-center gap-2">
+            <span class="text-2xl">{{ currencyFlag(selected().code) }}</span>
+            <div>
+              <p class="text-base font-bold" style="color:#1e2d5a;">{{ selected().code }}</p>
+              <p class="text-xs" style="color:#94a8c5;">{{ selected().name }}</p>
+            </div>
           </div>
           <div class="text-right">
-            <p class="text-xl font-bold text-white">{{ selected().symbol }}{{ selected().rate | number: '1.4-4' }}</p>
-            <p class="text-sm" [style.color]="selected().changePercent >= 0 ? '#43e97b' : '#ff6584'">
-              {{ selected().changePercent >= 0 ? '+' : '' }}{{ selected().changePercent | number: '1.2-2' }}%
+            <p class="text-xl font-black" style="color:#1e2d5a;">{{ selected().symbol }}{{ selected().rate | number:'1.4-4' }}</p>
+            <p class="text-sm font-semibold" [style.color]="selected().changePercent >= 0 ? '#22c55e' : '#f44336'">
+              {{ selected().changePercent >= 0 ? '+' : '' }}{{ selected().changePercent | number:'1.2-2' }}%
             </p>
           </div>
         </div>
 
-        <!-- Sparkline chart -->
-        <div class="mt-4 h-16 relative">
-          <svg [attr.viewBox]="'0 0 200 60'" class="w-full h-full" preserveAspectRatio="none">
+        <!-- Line chart -->
+        <div class="mt-3 rounded-xl overflow-hidden" style="height:72px; background:rgba(26,115,232,0.04);">
+          <svg viewBox="0 0 200 60" class="w-full h-full" preserveAspectRatio="none">
             <defs>
-              <linearGradient id="lineGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stop-color="#6c63ff" stop-opacity="0.4"/>
-                <stop offset="100%" stop-color="#6c63ff" stop-opacity="0"/>
+              <linearGradient id="fillGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%"   stop-color="#1a73e8" stop-opacity="0.25"/>
+                <stop offset="100%" stop-color="#1a73e8" stop-opacity="0"/>
               </linearGradient>
             </defs>
-            <path [attr.d]="chartFillPath()" fill="url(#lineGrad)"/>
-            <path [attr.d]="chartLinePath()" fill="none" stroke="#6c63ff" stroke-width="2"
+            <path [attr.d]="chartFillPath()" fill="url(#fillGrad)"/>
+            <path [attr.d]="chartLinePath()" fill="none" stroke="#1a73e8" stroke-width="2"
                   stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </div>
 
-        <!-- Period selector -->
+        <!-- Period buttons -->
         <div class="flex gap-2 mt-3">
           @for (p of periods; track p) {
             <button
               (click)="selectedPeriod.set(p)"
-              class="px-3 py-1 rounded-lg text-xs font-medium transition-all duration-200"
-              [style.background]="selectedPeriod() === p ? '#6c63ff' : 'rgba(108,99,255,0.1)'"
-              [style.color]="selectedPeriod() === p ? 'white' : '#8b8bad'">
+              class="flex-1 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200"
+              [style.background]="selectedPeriod() === p ? '#1a73e8' : 'rgba(26,115,232,0.08)'"
+              [style.color]="selectedPeriod() === p ? 'white' : '#94a8c5'">
               {{ p }}
             </button>
           }
@@ -60,49 +63,81 @@
       </div>
     </div>
 
-    <!-- Currency List -->
-    <div class="px-5">
-      <p class="text-xs font-medium mb-3" style="color: #8b8bad;">ALL CURRENCIES</p>
-      <div class="flex flex-col gap-3">
+    <!-- Currency table -->
+    <div class="px-5 mb-5">
+      <!-- Table header -->
+      <div class="grid grid-cols-4 gap-2 px-4 mb-2">
+        <p class="text-xs font-semibold col-span-1" style="color:#94a8c5;">CURRENCY</p>
+        <p class="text-xs font-semibold text-center" style="color:#94a8c5;">BUY</p>
+        <p class="text-xs font-semibold text-center" style="color:#94a8c5;">SELL</p>
+        <p class="text-xs font-semibold text-right" style="color:#94a8c5;">TREND</p>
+      </div>
+
+      <div class="flex flex-col gap-2">
         @for (currency of currencies(); track currency.code) {
           <button
             (click)="selectCurrency(currency)"
-            class="glass-card p-4 flex items-center gap-4 text-left transition-all duration-200 active:scale-98 w-full"
-            [style.border-color]="selected().code === currency.code ? 'rgba(108,99,255,0.5)' : 'rgba(108,99,255,0.15)'">
+            class="glass-card px-4 py-3 w-full grid grid-cols-4 gap-2 items-center text-left transition-all duration-200 active:scale-98"
+            [style.border-color]="selected().code === currency.code ? 'rgba(26,115,232,0.4)' : 'rgba(255,255,255,0.9)'"
+            [style.background]="selected().code === currency.code ? 'rgba(26,115,232,0.06)' : 'rgba(255,255,255,0.75)'">
 
-            <div class="w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold flex-shrink-0"
-                 [style.background]="currencyBg(currency.code)">
-              {{ currencyFlag(currency.code) }}
-            </div>
-
-            <div class="flex-1 min-w-0">
-              <p class="font-semibold text-white">{{ currency.code }}</p>
-              <p class="text-xs" style="color: #8b8bad;">{{ currency.name }}</p>
-            </div>
-
-            <div class="w-16 h-8">
-              <svg viewBox="0 0 60 30" class="w-full h-full" preserveAspectRatio="none">
-                <path [attr.d]="miniSparkline(currency)" fill="none"
-                      [attr.stroke]="currency.changePercent >= 0 ? '#43e97b' : '#ff6584'"
-                      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </div>
-
-            <div class="text-right flex-shrink-0">
-              <p class="font-bold text-white text-sm">{{ currency.symbol }}{{ currency.rate | number: '1.2-4' }}</p>
-              <div class="flex items-center justify-end gap-1">
-                <ion-icon
-                  [name]="currency.changePercent >= 0 ? 'trending-up-outline' : 'trending-down-outline'"
-                  [style.color]="currency.changePercent >= 0 ? '#43e97b' : '#ff6584'"
-                  style="font-size: 12px;"></ion-icon>
-                <span class="text-xs"
-                      [style.color]="currency.changePercent >= 0 ? '#43e97b' : '#ff6584'">
-                  {{ currency.changePercent >= 0 ? '+' : '' }}{{ currency.changePercent | number: '1.2-2' }}%
-                </span>
+            <!-- Name -->
+            <div class="flex items-center gap-2 col-span-1">
+              <span class="text-lg">{{ currencyFlag(currency.code) }}</span>
+              <div>
+                <p class="text-sm font-bold leading-tight" style="color:#1e2d5a;">{{ currency.code }}</p>
+                <p class="text-xs leading-tight" style="color:#94a8c5;">{{ currency.name }}</p>
               </div>
+            </div>
+
+            <!-- Buy rate -->
+            <div class="text-center">
+              <p class="text-sm font-bold" style="color:#1e2d5a;">{{ currency.symbol }}{{ (currency.rate * 0.993) | number:'1.2-4' }}</p>
+              <p class="text-xs" [style.color]="currency.changePercent >= 0 ? '#22c55e' : '#f44336'">
+                {{ currency.changePercent >= 0 ? '+' : '' }}{{ (currency.changePercent * 0.9) | number:'1.2-2' }}%
+              </p>
+            </div>
+
+            <!-- Sell rate -->
+            <div class="text-center">
+              <p class="text-sm font-bold" style="color:#1e2d5a;">{{ currency.symbol }}{{ (currency.rate * 1.007) | number:'1.2-4' }}</p>
+              <p class="text-xs" [style.color]="currency.changePercent >= 0 ? '#22c55e' : '#f44336'">
+                {{ currency.changePercent >= 0 ? '+' : '' }}{{ (currency.changePercent * 1.1) | number:'1.2-2' }}%
+              </p>
+            </div>
+
+            <!-- Sparkline -->
+            <div class="flex justify-end">
+              <svg viewBox="0 0 60 30" style="width:52px;height:28px;" preserveAspectRatio="none">
+                <path [attr.d]="miniSparkline(currency)" fill="none"
+                      [attr.stroke]="currency.changePercent >= 0 ? '#22c55e' : '#f44336'"
+                      stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
             </div>
           </button>
         }
+      </div>
+    </div>
+
+    <!-- Bar chart section -->
+    <div class="px-5">
+      <div class="glass-card p-4">
+        <div class="flex items-center justify-between mb-4">
+          <p class="text-sm font-bold" style="color:#1e2d5a;">Volume Overview 2025</p>
+          <span class="text-xs px-2.5 py-1 rounded-full font-semibold"
+                style="background:rgba(26,115,232,0.1); color:#1a73e8;">Weekly</span>
+        </div>
+        <div class="flex items-end gap-3 h-24">
+          @for (currency of currencies(); track currency.code) {
+            <div class="flex-1 flex flex-col items-center gap-1">
+              <div class="w-full rounded-t-xl bar-animate"
+                   style="background:linear-gradient(180deg,#5b9ef7,#1a73e8);"
+                   [style.height.px]="60 + ($index * 18)">
+              </div>
+              <span class="text-xs font-semibold" style="color:#94a8c5;">{{ currency.code }}</span>
+            </div>
+          }
+        </div>
       </div>
     </div>
 

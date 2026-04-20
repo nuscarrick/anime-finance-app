@@ -1,60 +1,48 @@
 <ion-content>
-  <div class="min-h-full pb-24 page-enter" style="background: #0f0f1a;">
+  <div class="bg-app pb-28 page-enter">
 
     <!-- Header -->
     <div class="flex items-center justify-between px-5 pt-12 pb-4">
-      <div class="flex items-center gap-3">
-        @defer (on idle) {
-          <div class="relative">
-            <img
-              [src]="user()?.image || 'https://dummyjson.com/icon/emilys/128'"
-              class="w-11 h-11 rounded-full object-cover"
-              style="border: 2px solid #6c63ff;"
-              alt="avatar"
-            />
-            <div class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-green-400"
-                 style="border: 2px solid #0f0f1a;"></div>
-          </div>
-        } @placeholder {
-          <div class="skeleton w-11 h-11 rounded-full"></div>
-        }
-        <div>
-          <p class="text-xs" style="color: #8b8bad;">Good {{ greeting() }},</p>
-          <p class="text-base font-semibold text-white">{{ user()?.firstName || 'User' }} {{ user()?.lastName || '' }}</p>
+      <div>
+        <p class="text-xs font-medium" style="color:#94a8c5;">Good {{ greeting() }},</p>
+        <p class="text-lg font-bold" style="color:#1e2d5a;">{{ user()?.firstName || 'User' }} {{ user()?.lastName || '' }}</p>
+      </div>
+      @defer (on idle) {
+        <div class="relative">
+          <img [src]="user()?.image || 'https://dummyjson.com/icon/emilys/128'"
+               class="w-12 h-12 rounded-full object-cover"
+               style="border: 2.5px solid #1a73e8; box-shadow: 0 0 0 4px rgba(26,115,232,0.15);"
+               alt="avatar" />
+          <div class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-green-400"
+               style="border: 2px solid white;"></div>
         </div>
-      </div>
-      <button class="relative w-10 h-10 rounded-full flex items-center justify-center"
-              style="background: rgba(30,30,53,0.8); border: 1px solid rgba(108,99,255,0.2);">
-        <ion-icon name="notifications-outline" style="color: #8b8bad; font-size: 20px;"></ion-icon>
-        <span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full" style="background: #ff6584;"></span>
-      </button>
+      } @placeholder {
+        <div class="skeleton w-12 h-12 rounded-full"></div>
+      }
     </div>
 
-    <!-- Balance overview -->
-    <div class="px-5 mb-6">
-      <p class="text-sm mb-1" style="color: #8b8bad;">Total Portfolio</p>
-      <div class="flex items-end gap-2">
-        <span class="text-4xl font-bold text-white">
-          ${{ totalBalance() | number: '1.0-0' }}
-        </span>
-        <span class="text-sm mb-1.5 font-medium" style="color: #43e97b;">+3.6%</span>
-      </div>
-    </div>
-
-    <!-- Amount Input -->
+    <!-- Total Portfolio -->
     <div class="px-5 mb-5">
-      <label class="text-xs font-medium block mb-2" style="color: #8b8bad;">TRANSFER AMOUNT</label>
-      <div class="relative flex items-center rounded-2xl overflow-hidden"
-           style="background: rgba(30,30,53,0.8); border: 1px solid rgba(108,99,255,0.2);">
-        <span class="pl-4 text-lg font-bold" style="color: #6c63ff;">$</span>
+      <p class="text-xs font-semibold uppercase tracking-wider mb-1" style="color:#94a8c5;">Total Portfolio</p>
+      <div class="flex items-end gap-2">
+        <span class="text-4xl font-black" style="color:#1e2d5a;">${{ totalBalance() | number:'1.0-0' }}</span>
+        <span class="text-sm mb-1.5 font-semibold" style="color:#22c55e;">+3.6%</span>
+      </div>
+    </div>
+
+    <!-- Input -->
+    <div class="px-5 mb-5">
+      <div class="glass-card flex items-center px-4 py-3 gap-2">
+        <span class="text-base font-bold" style="color:#1a73e8;">$</span>
         <input
           type="number"
-          [ngModel]="inputAmount()"
-          (ngModelChange)="finance.setInputAmount($event)"
-          class="flex-1 px-3 py-3.5 text-white text-lg font-semibold bg-transparent outline-none"
-          style="min-width: 0;"
+          [value]="inputAmount()"
+          (input)="finance.setInputAmount(+$any($event.target).value)"
+          class="flex-1 text-lg font-semibold outline-none bg-transparent"
+          style="color:#1e2d5a; min-width:0;"
+          placeholder="0"
         />
-        <span class="pr-4 text-sm" style="color: #8b8bad;">USD</span>
+        <span class="text-sm font-semibold" style="color:#94a8c5;">USD</span>
       </div>
     </div>
 
@@ -67,13 +55,11 @@
             [class]="card.id === 'card-1' ? 'gradient-card-1' : 'gradient-card-2'"
             (click)="navigateToCurrency(card)">
             <p class="text-xs font-medium mb-2 opacity-80 text-white">{{ card.label }}</p>
-            <p class="text-2xl font-bold text-white mb-2">
-              ${{ card.amount | number: '1.0-0' }}
-            </p>
+            <p class="text-2xl font-black text-white mb-1">${{ card.amount | number:'1.0-0' }}</p>
             <div class="flex items-center gap-1">
               <ion-icon
                 [name]="card.trend === 'up' ? 'trending-up-outline' : 'trending-down-outline'"
-                style="font-size: 14px; color: white; opacity: 0.8;"></ion-icon>
+                style="font-size:13px; color:white; opacity:0.85;"></ion-icon>
               <span class="text-xs text-white opacity-80">{{ card.trendPercent }}%</span>
             </div>
           </button>
@@ -81,60 +67,83 @@
       </div>
     </div>
 
-    <!-- Allocation Slider -->
+    <!-- Vertical comparison chart -->
     <div class="px-5 mb-5">
       <div class="glass-card p-4">
-        <div class="flex items-center justify-between mb-3">
-          <p class="text-sm font-medium text-white">Allocation</p>
-          <span class="text-sm font-bold" style="color: #6c63ff;">{{ sliderValue() }}%</span>
-        </div>
-        <ion-range
-          [value]="sliderValue()"
-          (ionChange)="onSliderChange($event)"
-          [min]="0"
-          [max]="100"
-          [step]="1"
-          class="px-0">
-        </ion-range>
-        <div class="flex justify-between text-xs mt-1" style="color: #8b8bad;">
-          <span>Conservative</span>
-          <span>Aggressive</span>
-        </div>
-      </div>
-    </div>
+        <div class="flex items-stretch gap-3" style="height:160px;">
 
-    <!-- Monthly Chart -->
-    <div class="px-5 mb-5">
-      <div class="glass-card p-4">
-        <div class="flex items-center justify-between mb-4">
-          <p class="text-sm font-medium text-white">Monthly Overview</p>
-          <span class="text-xs px-2 py-1 rounded-full" style="background: rgba(108,99,255,0.2); color: #6c63ff;">2025</span>
-        </div>
-        <div class="flex items-end gap-1.5 h-24">
-          @for (bar of monthlyData(); track $index) {
-            <div class="flex-1 rounded-t-md transition-all duration-700"
-                 [style.height.%]="bar.value"
-                 [style.background]="bar.active ? '#6c63ff' : 'rgba(108,99,255,0.2)'"
-                 class="bar-animate">
+          <!-- Scale labels left -->
+          <div class="flex flex-col justify-between items-end pt-5 pb-1" style="width:36px;">
+            @for (m of scaleMarks; track m) {
+              <span class="text-xs leading-none" style="color:#94a8c5;">{{ m }}</span>
+            }
+          </div>
+
+          <!-- Bar card-1 -->
+          <div class="flex-1 flex flex-col items-center gap-1">
+            <p class="text-xs font-semibold truncate w-full text-center" style="color:#1e2d5a;">{{ cards()[0]?.label }}</p>
+            <div class="flex-1 w-full rounded-xl overflow-hidden relative" style="background:rgba(26,115,232,0.1);">
+              <div class="absolute bottom-0 left-0 right-0 rounded-xl bar-animate"
+                   style="background:linear-gradient(180deg,#5b9ef7,#1a73e8); transition: height 0.7s ease;"
+                   [style.height.%]="((cards()[0]?.amount ?? 0) / 2100) * 100">
+              </div>
             </div>
-          }
+          </div>
+
+          <!-- Bar card-2 -->
+          <div class="flex-1 flex flex-col items-center gap-1">
+            <p class="text-xs font-semibold truncate w-full text-center" style="color:#1e2d5a;">{{ cards()[1]?.label }}</p>
+            <div class="flex-1 w-full rounded-xl overflow-hidden relative" style="background:rgba(244,67,54,0.1);">
+              <div class="absolute bottom-0 left-0 right-0 rounded-xl bar-animate"
+                   style="background:linear-gradient(180deg,#ff7c6e,#f44336); transition: height 0.7s ease;"
+                   [style.height.%]="((cards()[1]?.amount ?? 0) / 2100) * 100">
+              </div>
+            </div>
+          </div>
+
+          <!-- Scale labels right -->
+          <div class="flex flex-col justify-between items-start pt-5 pb-1" style="width:36px;">
+            @for (m of scaleMarks; track m) {
+              <span class="text-xs leading-none" style="color:#94a8c5;">{{ m }}</span>
+            }
+          </div>
         </div>
-        <div class="flex gap-1.5 mt-1">
-          @for (bar of monthlyData(); track $index) {
-            <div class="flex-1 text-center text-xs" style="color: #8b8bad;">{{ bar.label }}</div>
-          }
+
+        <!-- Values row -->
+        <div class="flex gap-3 mt-2 px-10">
+          <div class="flex-1 text-center">
+            <span class="text-sm font-bold" style="color:#1a73e8;">${{ cards()[0]?.amount | number:'1.0-0' }}</span>
+          </div>
+          <div class="flex-1 text-center">
+            <span class="text-sm font-bold" style="color:#f44336;">${{ cards()[1]?.amount | number:'1.0-0' }}</span>
+          </div>
+        </div>
+
+        <!-- Allocation slider -->
+        <div class="mt-3">
+          <ion-range
+            [value]="sliderValue()"
+            (ionChange)="onSliderChange($event)"
+            [min]="0" [max]="100" [step]="1"
+            class="px-0">
+          </ion-range>
+          <div class="flex justify-between text-xs" style="color:#94a8c5;">
+            <span>Conservative</span>
+            <span class="font-bold" style="color:#1a73e8;">{{ sliderValue() }}%</span>
+            <span>Aggressive</span>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- CTA Button -->
+    <!-- CTA -->
     <div class="px-5">
       <button
         class="w-full py-4 rounded-2xl font-bold text-white text-base flex items-center justify-center gap-2 transition-all duration-200 active:scale-95 pulse-glow"
-        style="background: linear-gradient(135deg, #6c63ff, #a855f7);"
+        style="background:linear-gradient(135deg,#1a73e8,#5b9ef7);"
         (click)="onTransfer()">
         Send Money
-        <ion-icon name="arrow-forward-outline" style="font-size: 18px;"></ion-icon>
+        <ion-icon name="arrow-forward-outline" style="font-size:18px;"></ion-icon>
       </button>
     </div>
 

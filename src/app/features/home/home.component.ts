@@ -51,6 +51,8 @@ export class HomeComponent {
     return 'evening';
   });
 
+  scaleMarks = [2000, 1500, 1000, 500, 100];
+
   monthlyData = signal([
     { label: 'J', value: 60, active: false },
     { label: 'F', value: 45, active: false },

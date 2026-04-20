@@ -6,7 +6,9 @@ import {
   inject,
 } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
-import { IonContent } from '@ionic/angular/standalone';
+import { IonContent, IonIcon } from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { settingsOutline } from 'ionicons/icons';
 import { FinanceService } from '../../core/services/finance.service';
 
 @Component({
@@ -14,11 +16,15 @@ import { FinanceService } from '../../core/services/finance.service';
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'ion-page' },
-  imports: [DecimalPipe, IonContent],
+  imports: [DecimalPipe, IonContent, IonIcon],
   templateUrl: './analytics.component.html',
 })
 export class AnalyticsComponent {
   finance = inject(FinanceService);
+
+  constructor() {
+    addIcons({ settingsOutline });
+  }
   analytics = this.finance.analytics;
 
   weeklyData = signal([
@@ -37,6 +43,10 @@ export class AnalyticsComponent {
     const a = this.analytics();
     return Math.round((a.totalExpense / a.totalIncome) * 100);
   });
+
+  selectedTab = signal(0);
+
+  selectedCategory = computed(() => this.analytics().categories[this.selectedTab()] ?? this.analytics().categories[0]);
 
   donutSegments = computed(() => {
     const circumference = 2 * Math.PI * 40;

@@ -10,18 +10,16 @@
 
 @layer base {
   :root {
-    --color-bg-primary: #0f0f1a;
-    --color-bg-secondary: #16162a;
-    --color-bg-card: #1e1e35;
-    --color-accent: #6c63ff;
-    --color-accent-2: #ff6584;
-    --color-text-primary: #ffffff;
-    --color-text-secondary: #8b8bad;
+    --color-bg-primary: #dff0ff;
+    --color-bg-secondary: #c8e4f8;
+    --color-bg-card: rgba(255, 255, 255, 0.75);
+    --color-accent: #1a73e8;
+    --color-accent-2: #f44336;
+    --color-text-primary: #1e2d5a;
+    --color-text-secondary: #94a8c5;
   }
 
-  * {
-    box-sizing: border-box;
-  }
+  * { box-sizing: border-box; }
 
   body {
     background-color: var(--color-bg-primary);
@@ -31,40 +29,44 @@
     padding: 0;
   }
 
-  ion-app {
-    background: var(--color-bg-primary);
-  }
-
-  ion-content {
-    --background: var(--color-bg-primary);
-  }
+  ion-app { background: var(--color-bg-primary); }
+  ion-content { --background: transparent; }
 }
 
 @layer utilities {
   .glass-card {
-    background: rgba(30, 30, 53, 0.8);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(108, 99, 255, 0.15);
-    border-radius: 1rem;
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    border-radius: 1.25rem;
+    box-shadow: 0 4px 20px rgba(26, 115, 232, 0.08);
   }
 
   .gradient-accent {
-    background: linear-gradient(135deg, #6c63ff 0%, #a855f7 100%);
+    background: linear-gradient(135deg, #1a73e8 0%, #5b9ef7 100%);
   }
 
   .gradient-card-1 {
-    background: linear-gradient(135deg, #6c63ff 0%, #8b7cf8 100%);
+    background: linear-gradient(135deg, #1a73e8 0%, #5b9ef7 100%);
+    box-shadow: 0 6px 20px rgba(26, 115, 232, 0.3);
   }
 
   .gradient-card-2 {
-    background: linear-gradient(135deg, #ff6584 0%, #ff8fa3 100%);
+    background: linear-gradient(135deg, #f44336 0%, #ff7c6e 100%);
+    box-shadow: 0 6px 20px rgba(244, 67, 54, 0.3);
   }
 
   .text-gradient {
-    background: linear-gradient(135deg, #6c63ff, #a855f7);
+    background: linear-gradient(135deg, #1a73e8, #5b9ef7);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+  }
+
+  .bg-app {
+    background: linear-gradient(160deg, #e8f4ff 0%, #d4eafe 60%, #c8e0ff 100%);
+    min-height: 100%;
   }
 }
 
@@ -79,22 +81,22 @@
 
 @keyframes pageSlideIn {
   from { opacity: 0; transform: translateY(20px) scale(0.98); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
+  to   { opacity: 1; transform: translateY(0)    scale(1); }
 }
 
 @keyframes pageSlideOut {
   from { opacity: 1; transform: translateY(0); }
-  to { opacity: 0; transform: translateY(-20px); }
+  to   { opacity: 0; transform: translateY(-20px); }
 }
 
-/* Skeleton loading animation */
+/* Skeleton */
 @keyframes shimmer {
-  0% { background-position: -200px 0; }
+  0%   { background-position: -200px 0; }
   100% { background-position: calc(200px + 100%) 0; }
 }
 
 .skeleton {
-  background: linear-gradient(90deg, #1e1e35 25%, #2a2a45 50%, #1e1e35 75%);
+  background: linear-gradient(90deg, #d4eafe 25%, #bfd8f7 50%, #d4eafe 75%);
   background-size: 400px 100%;
   animation: shimmer 1.5s infinite;
   border-radius: 0.5rem;
@@ -103,7 +105,7 @@
 /* Chart bar animation */
 @keyframes growBar {
   from { transform: scaleY(0); transform-origin: bottom; }
-  to { transform: scaleY(1); transform-origin: bottom; }
+  to   { transform: scaleY(1); transform-origin: bottom; }
 }
 
 .bar-animate {
@@ -112,8 +114,8 @@
 
 /* Pulse glow */
 @keyframes pulseGlow {
-  0%, 100% { box-shadow: 0 0 8px rgba(108, 99, 255, 0.4); }
-  50% { box-shadow: 0 0 20px rgba(108, 99, 255, 0.8); }
+  0%, 100% { box-shadow: 0 0 8px  rgba(26, 115, 232, 0.35); }
+  50%       { box-shadow: 0 0 24px rgba(26, 115, 232, 0.7);  }
 }
 
 .pulse-glow {
@@ -123,50 +125,46 @@
 /* Slide tab animations */
 @keyframes slideFromLeft {
   from { opacity: 0; transform: translateX(-30px); }
-  to { opacity: 1; transform: translateX(0); }
+  to   { opacity: 1; transform: translateX(0); }
 }
 
 @keyframes slideFromRight {
   from { opacity: 0; transform: translateX(30px); }
-  to { opacity: 1; transform: translateX(0); }
+  to   { opacity: 1; transform: translateX(0); }
 }
 
-.slide-from-left {
-  animation: slideFromLeft 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-}
+.slide-from-left  { animation: slideFromLeft  0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
+.slide-from-right { animation: slideFromRight 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
 
-.slide-from-right {
-  animation: slideFromRight 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-}
-
-/* Custom scrollbar */
-::-webkit-scrollbar { width: 4px; }
-::-webkit-scrollbar-track { background: #1e1e35; }
-::-webkit-scrollbar-thumb { background: #6c63ff; border-radius: 2px; }
+/* Scrollbar */
+::-webkit-scrollbar       { width: 4px; }
+::-webkit-scrollbar-track { background: #d4eafe; }
+::-webkit-scrollbar-thumb { background: #1a73e8; border-radius: 2px; }
 
 /* Ion overrides */
 ion-tab-bar {
-  --background: #16162a;
-  --border: 1px solid rgba(108, 99, 255, 0.15);
+  --background: rgba(255, 255, 255, 0.85);
+  --border: 1px solid rgba(26, 115, 232, 0.12);
+  backdrop-filter: blur(12px);
 }
 
 ion-tab-button {
-  --color: #8b8bad;
-  --color-selected: #6c63ff;
+  --color:          #94a8c5;
+  --color-selected: #1a73e8;
 }
 
 ion-range {
-  --bar-background: #2a2a45;
-  --bar-background-active: #6c63ff;
-  --knob-background: #6c63ff;
-  --knob-box-shadow: 0 0 8px rgba(108, 99, 255, 0.6);
+  --bar-background:        rgba(26, 115, 232, 0.15);
+  --bar-background-active: #1a73e8;
+  --knob-background:       #1a73e8;
+  --knob-box-shadow:        0 0 8px rgba(26, 115, 232, 0.5);
 }
 
 ion-input {
-  --background: #1e1e35;
-  --color: #ffffff;
-  --placeholder-color: #8b8bad;
-  --border-radius: 12px;
-  --padding-start: 16px;
-  --padding-end: 16px;
+  --background:        rgba(255,255,255,0.8);
+  --color:             #1e2d5a;
+  --placeholder-color: #94a8c5;
+  --border-radius:     12px;
+  --padding-start:     16px;
+  --padding-end:       16px;
 }
