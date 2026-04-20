@@ -1,9 +1,4 @@
-<ion-content>
-  <!-- Tap outside to close menu -->
-  @if (showMenu()) {
-    <div class="fixed inset-0 z-40" (click)="showMenu.set(false)"></div>
-  }
-
+<ion-content (click)="showMenu.set(false)">
   <div class="bg-app pb-28 page-enter">
 
     <!-- Header: logo + user info | "..." menu -->
@@ -29,7 +24,7 @@
       </div>
 
       <!-- Right: "..." menu -->
-      <div class="relative z-50">
+      <div class="relative z-50" (click)="$event.stopPropagation()">
         <button
           (click)="showMenu.set(!showMenu())"
           class="w-9 h-9 rounded-full flex items-center justify-center font-bold text-lg transition-all"
