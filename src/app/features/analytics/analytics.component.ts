@@ -13,6 +13,7 @@ import { FinanceService } from '../../core/services/finance.service';
   selector: 'app-analytics',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { class: 'ion-page' },
   imports: [DecimalPipe, IonContent],
   templateUrl: './analytics.component.html',
 })

@@ -18,6 +18,7 @@ import { CurrencyRate } from '../../core/models/finance.model';
   selector: 'app-currency',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { class: 'ion-page' },
   imports: [DecimalPipe, IonContent, IonIcon],
   templateUrl: './currency.component.html',
 })

@@ -26,6 +26,7 @@ import { FinanceService } from '../../core/services/finance.service';
   selector: 'app-home',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { class: 'ion-page' },
   imports: [DecimalPipe, FormsModule, IonContent, IonRange, IonIcon],
   templateUrl: './home.component.html',
 })

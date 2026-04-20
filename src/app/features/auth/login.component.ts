@@ -19,6 +19,7 @@ import { AuthService } from '../../core/services/auth.service';
   selector: 'app-login',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { class: 'ion-page' },
   imports: [FormsModule, IonContent, IonSpinner, IonIcon],
   template: `
     <ion-content>
