@@ -6,9 +6,11 @@ import {
   inject,
 } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
+import { Location } from '@angular/common';
 import { IonContent, IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { settingsOutline } from 'ionicons/icons';
+import { settingsOutline, arrowBackOutline } from 'ionicons/icons';
+import { AuthService } from '../../core/services/auth.service';
 import { FinanceService } from '../../core/services/finance.service';
 
 @Component({
@@ -21,32 +23,20 @@ import { FinanceService } from '../../core/services/finance.service';
 })
 export class AnalyticsComponent {
   finance = inject(FinanceService);
+  auth = inject(AuthService);
+  location = inject(Location);
 
-  constructor() {
-    addIcons({ settingsOutline });
-  }
+  user = this.auth.user;
   analytics = this.finance.analytics;
 
-  weeklyData = signal([
-    { label: 'Mon', value: 120, active: false },
-    { label: 'Tue', value: 85, active: false },
-    { label: 'Wed', value: 200, active: false },
-    { label: 'Thu', value: 160, active: false },
-    { label: 'Fri', value: 240, active: false },
-    { label: 'Sat', value: 320, active: true },
-    { label: 'Sun', value: 180, active: false },
-  ]);
+  selectedTab = signal(0);
 
-  maxWeekly = computed(() => Math.max(...this.weeklyData().map((d) => d.value)));
+  selectedCategory = computed(() => this.analytics().categories[this.selectedTab()] ?? this.analytics().categories[0]);
 
   totalExpensePct = computed(() => {
     const a = this.analytics();
     return Math.round((a.totalExpense / a.totalIncome) * 100);
   });
-
-  selectedTab = signal(0);
-
-  selectedCategory = computed(() => this.analytics().categories[this.selectedTab()] ?? this.analytics().categories[0]);
 
   donutSegments = computed(() => {
     const circumference = 2 * Math.PI * 40;
@@ -65,4 +55,10 @@ export class AnalyticsComponent {
       return seg;
     });
   });
+
+  constructor() {
+    addIcons({ settingsOutline, arrowBackOutline });
+  }
+
+  goBack() { this.location.back(); }
 }

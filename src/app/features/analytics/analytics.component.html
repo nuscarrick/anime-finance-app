@@ -2,47 +2,53 @@
   <div class="bg-app pb-28 slide-from-right">
 
     <!-- Header -->
-    <div class="flex items-center justify-between px-5 pt-12 pb-4">
-      <div>
-        <p class="text-xs font-semibold uppercase tracking-wider mb-1" style="color:#94a8c5;">Overview</p>
-        <h1 class="text-2xl font-black" style="color:#1e2d5a;">Analytics</h1>
-      </div>
-      <div class="w-10 h-10 rounded-full flex items-center justify-center glass-card">
+    <div class="flex items-center justify-between px-5 pt-12 pb-5">
+      <button (click)="goBack()"
+              class="w-10 h-10 rounded-full flex items-center justify-center transition-all active:scale-90"
+              style="background:rgba(255,255,255,0.85); box-shadow:0 2px 8px rgba(26,115,232,0.1);">
+        <ion-icon name="arrow-back-outline" style="color:#1e2d5a; font-size:20px;"></ion-icon>
+      </button>
+      <div class="w-10 h-10 rounded-full flex items-center justify-center"
+           style="background:rgba(255,255,255,0.85); box-shadow:0 2px 8px rgba(26,115,232,0.1);">
         <ion-icon name="settings-outline" style="color:#94a8c5; font-size:18px;"></ion-icon>
       </div>
     </div>
 
-    <!-- Summary row -->
+    <!-- Amount headline (outside card) -->
     <div class="px-5 mb-5">
-      <div class="grid grid-cols-3 gap-3">
-        <div class="glass-card p-3 text-center">
-          <p class="text-xs mb-1 font-medium" style="color:#94a8c5;">Income</p>
-          <p class="text-sm font-black" style="color:#22c55e;">${{ analytics().totalIncome | number:'1.0-0' }}</p>
-        </div>
-        <div class="glass-card p-3 text-center">
-          <p class="text-xs mb-1 font-medium" style="color:#94a8c5;">Expense</p>
-          <p class="text-sm font-black" style="color:#f44336;">${{ analytics().totalExpense | number:'1.0-0' }}</p>
-        </div>
-        <div class="glass-card p-3 text-center">
-          <p class="text-xs mb-1 font-medium" style="color:#94a8c5;">Net</p>
-          <p class="text-sm font-black" style="color:#1a73e8;">${{ analytics().netBalance | number:'1.0-0' }}</p>
-        </div>
-      </div>
+      <p class="text-4xl font-black mb-1" style="color:#1e2d5a;">
+        ${{ analytics().netBalance | number:'1.0-0' }}
+      </p>
+      <p class="text-sm font-medium" style="color:#94a8c5;">Total Net Balance</p>
     </div>
 
-    <!-- Main chart card — donut left, detail right -->
-    <div class="px-5 mb-5">
+    <!-- Main card -->
+    <div class="px-5">
       <div class="glass-card p-5">
-        <div class="flex items-center gap-4">
+
+        <!-- Avatar + Donut row -->
+        <div class="flex items-center justify-around mb-5">
+
+          <!-- Avatar -->
+          @defer (on idle) {
+            <div class="relative flex-shrink-0">
+              <img [src]="user()?.image || 'https://dummyjson.com/icon/emilys/128'"
+                   class="w-20 h-20 rounded-full object-cover"
+                   style="border: 3px solid #1a73e8; box-shadow: 0 0 0 5px rgba(26,115,232,0.12);"
+                   alt="avatar" />
+            </div>
+          } @placeholder {
+            <div class="skeleton w-20 h-20 rounded-full flex-shrink-0"></div>
+          }
 
           <!-- Donut chart -->
-          <div class="relative flex-shrink-0" style="width:120px; height:120px;">
+          <div class="relative flex-shrink-0" style="width:110px; height:110px;">
             <svg viewBox="0 0 120 120" class="w-full h-full -rotate-90">
               @for (seg of donutSegments(); track $index) {
                 <circle cx="60" cy="60" r="40"
                   fill="none"
                   [attr.stroke]="seg.color"
-                  stroke-width="18"
+                  stroke-width="20"
                   [attr.stroke-dasharray]="seg.dash"
                   [attr.stroke-dashoffset]="seg.offset"
                   stroke-linecap="butt"
@@ -51,85 +57,34 @@
               }
             </svg>
             <div class="absolute inset-0 flex flex-col items-center justify-center">
-              <p class="text-xl font-black" style="color:#1e2d5a;">{{ totalExpensePct() }}%</p>
+              <p class="text-base font-black" style="color:#1e2d5a;">{{ totalExpensePct() }}%</p>
               <p class="text-xs font-medium" style="color:#94a8c5;">used</p>
-            </div>
-          </div>
-
-          <!-- Detail panel -->
-          <div class="flex-1">
-            <p class="text-2xl font-black mb-0.5" style="color:#1e2d5a;">
-              ${{ analytics().netBalance | number:'1.0-0' }}
-            </p>
-            <p class="text-xs mb-3" style="color:#94a8c5;">Total Net Balance</p>
-
-            <div class="rounded-xl p-3" [style.background]="selectedCategory().color + '18'">
-              <p class="text-xs font-medium mb-0.5" style="color:#94a8c5;">{{ selectedCategory().name }}</p>
-              <p class="text-base font-black" [style.color]="selectedCategory().color">
-                ${{ selectedCategory().amount | number:'1.0-0' }}
-                <span class="text-sm">/ {{ selectedCategory().percentage }}%</span>
-              </p>
             </div>
           </div>
         </div>
 
+        <!-- Selected category info -->
+        <div class="mb-4">
+          <p class="text-xs font-semibold mb-1" style="color:#94a8c5;">{{ selectedCategory().name }}</p>
+          <p class="text-2xl font-black" [style.color]="selectedCategory().color">
+            ${{ selectedCategory().amount | number:'1.0-0' }}
+            <span class="text-base font-semibold" style="color:#94a8c5;">/ {{ selectedCategory().percentage }}%</span>
+          </p>
+        </div>
+
         <!-- Category tabs -->
-        <div class="flex gap-2 mt-4">
+        <div class="flex gap-2">
           @for (cat of analytics().categories; track $index) {
             <button
               (click)="selectedTab.set($index)"
-              class="flex-1 py-2 rounded-xl text-xs font-bold transition-all duration-200"
+              class="flex-1 py-2 rounded-xl text-xs font-bold transition-all duration-200 active:scale-95"
               [style.background]="selectedTab() === $index ? cat.color : 'rgba(148,168,197,0.12)'"
               [style.color]="selectedTab() === $index ? 'white' : '#94a8c5'">
               {{ cat.name }}
             </button>
           }
         </div>
-      </div>
-    </div>
 
-    <!-- Category progress bars -->
-    <div class="px-5 mb-5">
-      <div class="glass-card p-4">
-        <p class="text-sm font-bold mb-4" style="color:#1e2d5a;">By Category</p>
-        <div class="flex flex-col gap-4">
-          @for (cat of analytics().categories; track cat.name) {
-            <div>
-              <div class="flex justify-between mb-1.5">
-                <div class="flex items-center gap-2">
-                  <div class="w-2.5 h-2.5 rounded-full" [style.background]="cat.color"></div>
-                  <span class="text-sm font-medium" style="color:#1e2d5a;">{{ cat.name }}</span>
-                </div>
-                <span class="text-sm font-bold" style="color:#1e2d5a;">${{ cat.amount | number:'1.0-0' }}</span>
-              </div>
-              <div class="h-2 rounded-full overflow-hidden" style="background:rgba(148,168,197,0.15);">
-                <div class="h-full rounded-full bar-animate"
-                     [style.width.%]="cat.percentage"
-                     [style.background]="cat.color">
-                </div>
-              </div>
-            </div>
-          }
-        </div>
-      </div>
-    </div>
-
-    <!-- Weekly spend bars -->
-    <div class="px-5">
-      <div class="glass-card p-4">
-        <p class="text-sm font-bold mb-4" style="color:#1e2d5a;">Weekly Spend</p>
-        <div class="flex items-end gap-2 h-20">
-          @for (day of weeklyData(); track $index) {
-            <div class="flex-1 flex flex-col items-center gap-1">
-              <div class="w-full rounded-t-lg bar-animate"
-                   [style.height.%]="(day.value / maxWeekly()) * 100"
-                   [style.background]="day.active ? '#1a73e8' : 'rgba(26,115,232,0.18)'"
-                   style="min-height:4px; transition: height 0.7s ease;">
-              </div>
-              <span class="text-xs font-medium" style="color:#94a8c5;">{{ day.label }}</span>
-            </div>
-          }
-        </div>
       </div>
     </div>
 
