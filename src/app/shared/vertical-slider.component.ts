@@ -20,30 +20,7 @@ type Accent = 'blue' | 'red';
   selector: 'app-vertical-slider',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `
-    <div
-      #track
-      class="vslider-hit"
-      [attr.data-accent]="accent()"
-      (pointerdown)="onPointerDown($event)"
-      (pointermove)="onPointerMove($event)"
-      (pointerup)="onPointerUp($event)"
-      (pointercancel)="onPointerUp($event)"
-      role="slider"
-      [attr.aria-label]="ariaLabel()"
-      [attr.aria-valuemin]="min()"
-      [attr.aria-valuemax]="max()"
-      [attr.aria-valuenow]="value()"
-      tabindex="0"
-      (keydown.arrowup)="nudge(1, $event)"
-      (keydown.arrowdown)="nudge(-1, $event)">
-      <div class="vslider-rail">
-        <div class="vslider-fill" [style.height.%]="fillPct()"></div>
-      </div>
-      <div class="vslider-thumb" [style.bottom.%]="fillPct()"
-           [class.is-dragging]="dragging()"></div>
-    </div>
-  `,
+  templateUrl: './vertical-slider.component.html',
   styles: [`
     :host {
       display: block;
