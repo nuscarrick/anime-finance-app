@@ -5,12 +5,18 @@ import {
   ChangeDetectionStrategy,
   inject,
 } from '@angular/core';
-import { DecimalPipe } from '@angular/common';
-import { Location } from '@angular/common';
+import { DecimalPipe, Location } from '@angular/common';
 import { IonContent, IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { settingsOutline, arrowBackOutline } from 'ionicons/icons';
 import { FinanceService } from '../../core/services/finance.service';
+
+interface DonutSegment {
+  color: string;
+  dash: string;
+  offset: number;
+  selected: boolean;
+}
 
 @Component({
   selector: 'app-analytics',
@@ -25,28 +31,32 @@ export class AnalyticsComponent {
   location = inject(Location);
 
   analytics = this.finance.analytics;
-
   selectedTab = signal(0);
 
-  selectedCategory = computed(() => this.analytics().categories[this.selectedTab()] ?? this.analytics().categories[0]);
+  selectedCategory = computed(
+    () =>
+      this.analytics().categories[this.selectedTab()] ??
+      this.analytics().categories[0]
+  );
 
-  totalExpensePct = computed(() => {
-    const a = this.analytics();
-    return Math.round((a.totalExpense / a.totalIncome) * 100);
-  });
+  // Donut center shows the selected category share, matching the ring.
+  donutCenterPct = computed(() => this.selectedCategory().percentage);
 
-  donutSegments = computed(() => {
-    const circumference = 2 * Math.PI * 40;
+  readonly DONUT_RADIUS = 40;
+  readonly DONUT_CIRCUMFERENCE = 2 * Math.PI * this.DONUT_RADIUS;
+
+  donutSegments = computed<DonutSegment[]>(() => {
+    const c = this.DONUT_CIRCUMFERENCE;
     const categories = this.analytics().categories;
+    const selected = this.selectedTab();
     let offset = 0;
-
-    return categories.map((cat) => {
-      const dash = (cat.percentage / 100) * circumference;
-      const gap = circumference - dash;
-      const seg = {
+    return categories.map((cat, i) => {
+      const dash = (cat.percentage / 100) * c;
+      const seg: DonutSegment = {
         color: cat.color,
-        dash: dash + ' ' + gap,
+        dash: `${dash} ${c - dash}`,
         offset: -offset,
+        selected: i === selected,
       };
       offset += dash;
       return seg;
@@ -57,5 +67,7 @@ export class AnalyticsComponent {
     addIcons({ settingsOutline, arrowBackOutline });
   }
 
-  goBack() { this.location.back(); }
+  goBack() {
+    this.location.back();
+  }
 }

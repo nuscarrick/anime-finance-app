@@ -141,6 +141,70 @@
 ::-webkit-scrollbar-track { background: #d4eafe; }
 ::-webkit-scrollbar-thumb { background: #1a73e8; border-radius: 2px; }
 
+/* Vertical slider: rotate a horizontal range to work on all browsers */
+.vertical-slider-wrap {
+  background: rgba(26, 115, 232, 0.08);
+  border: 1px solid rgba(26, 115, 232, 0.12);
+}
+.slider-fill-blue {
+  background: linear-gradient(180deg, #5b9ef7, #1a73e8);
+  box-shadow: 0 -2px 8px rgba(26, 115, 232, 0.35) inset;
+}
+.slider-fill-red {
+  background: linear-gradient(180deg, #ff7c6e, #f44336);
+  box-shadow: 0 -2px 8px rgba(244, 67, 54, 0.35) inset;
+}
+.vertical-range {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+  margin: 0;
+  padding: 0;
+}
+.vertical-range::-webkit-slider-runnable-track { background: transparent; height: 100%; }
+.vertical-range::-moz-range-track              { background: transparent; height: 100%; }
+.vertical-range::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 22px; height: 22px; border-radius: 50%;
+  background: white; border: 3px solid #1a73e8;
+  box-shadow: 0 2px 6px rgba(26, 115, 232, 0.4);
+  margin-top: 0;
+}
+.vertical-slider-wrap[data-accent="red"] .vertical-range::-webkit-slider-thumb { border-color: #f44336; }
+.vertical-range::-moz-range-thumb {
+  width: 22px; height: 22px; border-radius: 50%;
+  background: white; border: 3px solid #1a73e8;
+  box-shadow: 0 2px 6px rgba(26, 115, 232, 0.4);
+}
+.vertical-slider-wrap[data-accent="red"] .vertical-range::-moz-range-thumb { border-color: #f44336; }
+
+/* Menu pop-in */
+@keyframes menuPop {
+  from { opacity: 0; transform: translateY(-6px) scale(0.96); }
+  to   { opacity: 1; transform: translateY(0)     scale(1); }
+}
+.menu-pop { animation: menuPop 0.18s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; transform-origin: top right; }
+
+/* Donut entrance sweep */
+@keyframes donutSweep {
+  from { stroke-dasharray: 0 999; }
+}
+.donut-seg { animation: donutSweep 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
+
+/* Toast */
+.af-toast::part(container) {
+  background: linear-gradient(135deg, #1a73e8, #5b9ef7);
+  color: white;
+  border-radius: 14px;
+  box-shadow: 0 10px 30px rgba(26, 115, 232, 0.4);
+}
+
 /* Ion overrides */
 ion-tab-bar {
   --background: rgba(255, 255, 255, 0.85);

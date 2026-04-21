@@ -1,39 +1,109 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, signal, computed, effect } from '@angular/core';
 import { interval } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { CurrencyRate, ValueCard, AnalyticsSummary } from '../models/finance.model';
+import {
+  CurrencyRate,
+  ValueCard,
+  AnalyticsSummary,
+  Period,
+} from '../models/finance.model';
+
+const SLIDER_STATE_KEY = 'af_slider_state';
 
 @Injectable({ providedIn: 'root' })
 export class FinanceService {
   private _currencies = signal<CurrencyRate[]>(INITIAL_CURRENCIES);
   private _cards = signal<ValueCard[]>(INITIAL_CARDS);
   private _analytics = signal<AnalyticsSummary>(INITIAL_ANALYTICS);
-  private _sliderValue = signal<number>(65);
   private _inputAmount = signal<number>(1200);
+  private _period = signal<Period>('1W');
 
-  readonly currencies = this._currencies.asReadonly();
-  readonly cards = this._cards.asReadonly();
-  readonly analytics = this._analytics.asReadonly();
-  readonly sliderValue = this._sliderValue.asReadonly();
-  readonly inputAmount = this._inputAmount.asReadonly();
-
-  readonly totalBalance = computed(() =>
-    this._cards().reduce((sum, c) => sum + c.amount, 0)
+  // Per-card slider overrides (keyed by card id). Persisted via effect().
+  private _sliderValues = signal<Record<string, number>>(
+    this.loadSliderState()
   );
 
+  readonly currencies = this._currencies.asReadonly();
+  readonly inputAmount = this._inputAmount.asReadonly();
+  readonly period = this._period.asReadonly();
+  readonly sliderValues = this._sliderValues.asReadonly();
+
+  // Cards reflect slider overrides so sliders actually drive card amounts.
+  readonly cards = computed<ValueCard[]>(() => {
+    const overrides = this._sliderValues();
+    return this._cards().map((c) => ({
+      ...c,
+      amount: overrides[c.id] ?? c.amount,
+    }));
+  });
+
+  readonly totalBalance = computed(() =>
+    this.cards().reduce((sum, c) => sum + c.amount, 0)
+  );
+
+  readonly portfolioTrendPct = computed(() => {
+    const cards = this.cards();
+    if (!cards.length) return 0;
+    const avg = cards.reduce(
+      (s, c) => s + (c.trend === 'up' ? c.trendPercent : -c.trendPercent),
+      0
+    ) / cards.length;
+    return Math.round(avg * 10) / 10;
+  });
+
+  readonly analytics = this._analytics.asReadonly();
+
+  // Period-filtered chart data (slice the history by period size).
+  readonly periodChartData = computed<Record<string, number[]>>(() => {
+    const p = this._period();
+    const size = PERIOD_POINTS[p];
+    const map: Record<string, number[]> = {};
+    for (const c of this._currencies()) {
+      map[c.code] = c.chartData.slice(-size);
+    }
+    return map;
+  });
+
   constructor() {
-    // Simulate real-time currency updates every 3s
+    // Persist slider state whenever it changes.
+    effect(() => {
+      const state = this._sliderValues();
+      try {
+        localStorage.setItem(SLIDER_STATE_KEY, JSON.stringify(state));
+      } catch {
+        // ignore quota errors
+      }
+    });
+
+    // Simulate real-time currency updates every 3s.
     interval(3000)
       .pipe(takeUntilDestroyed())
       .subscribe(() => this.updateCurrencyRates());
   }
 
-  setSliderValue(v: number) {
-    this._sliderValue.set(v);
-  }
-
   setInputAmount(v: number) {
     this._inputAmount.set(v);
+  }
+
+  setPeriod(p: Period) {
+    this._period.set(p);
+  }
+
+  setSliderValue(cardId: string, value: number) {
+    this._sliderValues.update((s) => ({ ...s, [cardId]: value }));
+  }
+
+  resetSliders() {
+    this._sliderValues.set({});
+  }
+
+  private loadSliderState(): Record<string, number> {
+    try {
+      const raw = localStorage.getItem(SLIDER_STATE_KEY);
+      return raw ? (JSON.parse(raw) as Record<string, number>) : {};
+    } catch {
+      return {};
+    }
   }
 
   private updateCurrencyRates() {
@@ -42,7 +112,11 @@ export class FinanceService {
         const delta = (Math.random() - 0.48) * 0.5;
         const newRate = Math.max(0.01, r.rate + delta);
         const change = newRate - r.rate;
-        const newChartData = [...r.chartData.slice(1), Math.round(newRate * 100) / 100];
+        // Keep long history so period filter has enough points.
+        const newChartData = [
+          ...r.chartData.slice(-59),
+          Math.round(newRate * 100) / 100,
+        ];
         return {
           ...r,
           rate: Math.round(newRate * 10000) / 10000,
@@ -55,6 +129,22 @@ export class FinanceService {
   }
 }
 
+const PERIOD_POINTS: Record<Period, number> = {
+  '1D': 6,
+  '1W': 10,
+  '1M': 20,
+  '3M': 40,
+  '1Y': 60,
+};
+
+// Seed with 60 historical points so '1Y' view is populated from the start.
+const seedHistory = (base: number, volatility: number): number[] =>
+  Array.from({ length: 60 }, (_, i) => {
+    const drift = Math.sin(i / 4) * volatility;
+    const noise = (Math.random() - 0.5) * volatility * 0.6;
+    return Math.round((base + drift + noise) * 10000) / 10000;
+  });
+
 const INITIAL_CURRENCIES: CurrencyRate[] = [
   {
     code: 'USD',
@@ -63,7 +153,7 @@ const INITIAL_CURRENCIES: CurrencyRate[] = [
     rate: 1.0,
     change: 0.0023,
     changePercent: 0.23,
-    chartData: [1.0, 1.001, 0.999, 1.002, 1.001, 1.003, 1.002, 1.004, 1.003, 1.005],
+    chartData: seedHistory(1.0, 0.02),
   },
   {
     code: 'EUR',
@@ -72,7 +162,7 @@ const INITIAL_CURRENCIES: CurrencyRate[] = [
     rate: 0.9215,
     change: -0.0012,
     changePercent: -0.13,
-    chartData: [0.92, 0.921, 0.919, 0.922, 0.92, 0.921, 0.922, 0.921, 0.923, 0.9215],
+    chartData: seedHistory(0.92, 0.015),
   },
   {
     code: 'GBP',
@@ -81,7 +171,7 @@ const INITIAL_CURRENCIES: CurrencyRate[] = [
     rate: 0.7891,
     change: 0.0031,
     changePercent: 0.39,
-    chartData: [0.785, 0.786, 0.787, 0.786, 0.788, 0.787, 0.789, 0.788, 0.79, 0.7891],
+    chartData: seedHistory(0.79, 0.02),
   },
 ];
 

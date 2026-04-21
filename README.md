@@ -1,59 +1,83 @@
-# AnimeFinanceApp
+# FinanceFlow — Angular + Ionic + Tailwind
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.7.
+Modern 3-screen finance app built for the Angular Developer Test.
 
-## Development server
+**Live demo:** https://anime-finance-app.vercel.app/
 
-To start a local development server, run:
+**Demo credentials** (dummyjson.com):
+- Username: `emilys`
+- Password: `emilyspass`
+
+---
+
+## Stack
+
+- **Angular 21** — standalone components, zoneless change detection, signals
+- **Ionic 8** (standalone API, iOS mode)
+- **Tailwind CSS 3**
+- **RxJS 7** with Signals interop
+- **TypeScript 5.9** (strict mode)
+
+## Features
+
+### Screens
+- **Login** — custom glassmorphism design, `dummyjson.com/auth/login`, JWT stored in localStorage
+- **Home** (center tab) — user info, amount input, $1600 / $2100 value cards, vertical sliders that drive card amounts, Send Money CTA with toast
+- **Currency** (left tab) — USD / EUR / GBP list with live-updating rates, bar chart, period-filtered sparkline (1D / 1W / 1M / 3M / 1Y)
+- **Analytics** (right tab) — donut chart with interactive category tabs, animated entrance
+
+### Angular requirements satisfied
+- ✅ Standalone components (no NgModules)
+- ✅ `signal` / `computed` / `effect` (slider state persisted via `effect()`)
+- ✅ Signals ↔ RxJS interop (`toSignal`, `takeUntilDestroyed`)
+- ✅ New control flow (`@if`, `@for`, `@defer`)
+- ✅ Lazy loading via `loadComponent`
+- ✅ **Zoneless change detection** (no zone.js polyfill) — `provideZonelessChangeDetection()`
+- ✅ OnPush on all feature components
+
+### Real-time behavior
+Currency rates update every 3 seconds via `interval(3000)` piped through `takeUntilDestroyed()`. Chart and bars react automatically through computed signals.
+
+### Animations
+- Page slide-in (left/right/up)
+- Donut chart sweep-in with staggered segment delay
+- Bar chart grow-from-bottom (re-triggers on data tick)
+- Menu pop-in spring
+- Button press scale, pulse-glow CTA
+- Skeleton shimmer (on `@defer` placeholder)
+
+### Responsive
+Layouts target 280px minimum width using min-width flex children, `truncate`, and `tabular-nums`.
+
+---
+
+## Local development
 
 ```bash
-ng serve
+npm install
+npm start            # http://localhost:4200
+npm run build        # production build → dist/anime-finance-app/browser
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## Project structure
 
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
+```
+src/app
+├── core
+│   ├── guards/             auth.guard.ts
+│   ├── interceptors/       auth.interceptor.ts (Bearer token)
+│   ├── models/             auth.model.ts, finance.model.ts
+│   └── services/           auth.service.ts, finance.service.ts
+├── features
+│   ├── auth/               login.component
+│   ├── home/               home.component  (middle)
+│   ├── currency/           currency.component (left)
+│   ├── analytics/          analytics.component (right)
+│   └── tabs/               tabs.component
+├── app.config.ts           zoneless + router + http + Ionic
+└── app.routes.ts           auth-aware root redirect + lazy routes
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## Deployment
 
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Deployed to Vercel via `vercel.json` (SPA rewrites). GitHub Actions workflow also included for Pages fallback.

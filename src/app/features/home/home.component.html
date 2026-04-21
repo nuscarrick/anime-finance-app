@@ -3,10 +3,9 @@
 
     <!-- Header: logo + user info | "..." menu -->
     <div class="flex items-center justify-between px-5 pt-12 pb-4">
-      <!-- Left: avatar + name -->
-      <div class="flex items-center gap-3">
+      <div class="flex items-center gap-3 min-w-0">
         @defer (on idle) {
-          <div class="relative">
+          <div class="relative flex-shrink-0">
             <img [src]="user()?.image || 'https://dummyjson.com/icon/emilys/128'"
                  class="w-11 h-11 rounded-full object-cover"
                  style="border: 2.5px solid #1a73e8; box-shadow: 0 0 0 4px rgba(26,115,232,0.15);"
@@ -15,29 +14,35 @@
                  style="border: 2px solid white;"></div>
           </div>
         } @placeholder {
-          <div class="skeleton w-11 h-11 rounded-full"></div>
+          <div class="skeleton w-11 h-11 rounded-full flex-shrink-0"></div>
         }
-        <div>
-          <p class="text-xs font-medium" style="color:#94a8c5;">Good {{ greeting() }},</p>
-          <p class="text-sm font-bold" style="color:#1e2d5a;">{{ user()?.firstName || 'User' }} {{ user()?.lastName || '' }}</p>
+        <div class="min-w-0">
+          <p class="text-xs font-medium truncate" style="color:#94a8c5;">Good {{ greeting() }},</p>
+          <p class="text-sm font-bold truncate" style="color:#1e2d5a;">{{ user()?.firstName || 'User' }} {{ user()?.lastName || '' }}</p>
         </div>
       </div>
 
-      <!-- Right: "..." menu -->
-      <div class="relative z-50" (click)="$event.stopPropagation()">
+      <div class="relative z-50 flex-shrink-0" (click)="$event.stopPropagation()">
         <button
           (click)="showMenu.set(!showMenu())"
-          class="w-9 h-9 rounded-full flex items-center justify-center font-bold text-lg transition-all"
+          class="w-9 h-9 rounded-full flex items-center justify-center font-bold text-lg transition-all active:scale-90"
           style="background:rgba(255,255,255,0.8); color:#1e2d5a; letter-spacing:1px; box-shadow:0 2px 8px rgba(26,115,232,0.1);">
           ···
         </button>
         @if (showMenu()) {
-          <div class="absolute right-0 top-11 rounded-2xl overflow-hidden"
-               style="background:white; box-shadow:0 8px 24px rgba(26,115,232,0.15); min-width:140px; border:1px solid rgba(26,115,232,0.08);">
+          <div class="absolute right-0 top-11 rounded-2xl overflow-hidden menu-pop"
+               style="background:white; box-shadow:0 8px 24px rgba(26,115,232,0.15); min-width:150px; border:1px solid rgba(26,115,232,0.08);">
+            <button
+              (click)="resetSliders(); showMenu.set(false)"
+              class="w-full px-4 py-3 text-left text-sm font-semibold transition-all hover:bg-blue-50 flex items-center gap-2"
+              style="color:#1e2d5a;">
+              <ion-icon name="refresh-outline" style="font-size:16px;"></ion-icon>
+              Reset Sliders
+            </button>
             <button
               (click)="signOut()"
-              class="w-full px-4 py-3 text-left text-sm font-semibold transition-all hover:bg-blue-50 flex items-center gap-2"
-              style="color:#f44336;">
+              class="w-full px-4 py-3 text-left text-sm font-semibold transition-all hover:bg-red-50 flex items-center gap-2"
+              style="color:#f44336; border-top:1px solid rgba(26,115,232,0.06);">
               <ion-icon name="log-out-outline" style="font-size:16px;"></ion-icon>
               Sign Out
             </button>
@@ -49,9 +54,12 @@
     <!-- Total Portfolio -->
     <div class="px-5 mb-5">
       <p class="text-xs font-semibold uppercase tracking-wider mb-1" style="color:#94a8c5;">Total Portfolio</p>
-      <div class="flex items-end gap-2">
-        <span class="text-4xl font-black" style="color:#1e2d5a;">${{ totalBalance() | number:'1.0-0' }}</span>
-        <span class="text-sm mb-1.5 font-semibold" style="color:#22c55e;">+3.6%</span>
+      <div class="flex items-end gap-2 flex-wrap">
+        <span class="text-4xl font-black tabular-nums" style="color:#1e2d5a;">${{ totalBalance() | number:'1.0-0' }}</span>
+        <span class="text-sm mb-1.5 font-semibold"
+              [style.color]="portfolioTrendPct() >= 0 ? '#22c55e' : '#f44336'">
+          {{ portfolioTrendPct() >= 0 ? '+' : '' }}{{ portfolioTrendPct() }}%
+        </span>
       </div>
     </div>
 
@@ -62,9 +70,9 @@
         <input
           type="number"
           [value]="inputAmount()"
-          (input)="finance.setInputAmount(+$any($event.target).value)"
-          class="flex-1 text-lg font-semibold outline-none bg-transparent"
-          style="color:#1e2d5a; min-width:0;"
+          (input)="onInputChange($event)"
+          class="flex-1 text-lg font-semibold outline-none bg-transparent min-w-0"
+          style="color:#1e2d5a;"
           placeholder="0"
         />
         <span class="text-sm font-semibold" style="color:#94a8c5;">USD</span>
@@ -79,8 +87,8 @@
             class="rounded-2xl p-4 text-left transition-all duration-200 active:scale-95"
             [class]="card.id === 'card-1' ? 'gradient-card-1' : 'gradient-card-2'"
             (click)="navigateToCurrency(card)">
-            <p class="text-xs font-medium mb-2 opacity-80 text-white">{{ card.label }}</p>
-            <p class="text-2xl font-black text-white mb-1">${{ card.amount | number:'1.0-0' }}</p>
+            <p class="text-xs font-medium mb-2 opacity-80 text-white truncate">{{ card.label }}</p>
+            <p class="text-2xl font-black text-white mb-1 tabular-nums">${{ card.amount | number:'1.0-0' }}</p>
             <div class="flex items-center gap-1">
               <ion-icon
                 [name]="card.trend === 'up' ? 'trending-up-outline' : 'trending-down-outline'"
@@ -92,59 +100,46 @@
       </div>
     </div>
 
-    <!-- Vertical sliders comparison -->
+    <!-- Vertical sliders: driven by service, cross-browser safe -->
     <div class="px-5 mb-5">
       <div class="glass-card p-4">
-        <div class="flex items-stretch gap-2" style="height:200px;">
+        <div class="flex items-stretch gap-3" style="height:220px;">
 
-          <!-- Scale left -->
-          <div class="flex flex-col justify-between items-end py-2" style="width:38px;">
+          <div class="flex flex-col justify-between items-end py-1" style="width:36px;">
             @for (m of scaleMarks; track m) {
-              <span class="text-xs" style="color:#94a8c5;">{{ m }}</span>
+              <span class="text-[10px] tabular-nums" style="color:#94a8c5;">{{ m }}</span>
             }
           </div>
 
-          <!-- Slider 1 -->
-          <div class="flex-1 flex flex-col items-center gap-1 py-2">
-            <p class="text-xs font-semibold text-center truncate w-full" style="color:#1e2d5a;">
-              {{ cards()[0]?.label }}
-            </p>
-            <div class="flex-1 flex items-center justify-center">
-              <input
-                type="range"
-                [value]="slider1()"
-                (input)="slider1.set(+$any($event.target).value)"
-                min="100" max="2000" step="50"
-                class="vertical-range-input"
-                style="writing-mode:vertical-lr; direction:rtl; -webkit-appearance:slider-vertical; appearance:slider-vertical; height:130px; width:28px; cursor:pointer; accent-color:#1a73e8;"
-              />
-            </div>
-            <p class="text-xs font-bold" style="color:#1a73e8;">${{ slider1() | number:'1.0-0' }}</p>
-          </div>
+          @for (card of cards(); track card.id; let i = $index) {
+            <div class="flex-1 flex flex-col items-center gap-1.5 py-1 min-w-0">
+              <p class="text-[11px] font-semibold text-center truncate w-full" style="color:#1e2d5a;">
+                {{ card.label }}
+              </p>
 
-          <!-- Slider 2 -->
-          <div class="flex-1 flex flex-col items-center gap-1 py-2">
-            <p class="text-xs font-semibold text-center truncate w-full" style="color:#1e2d5a;">
-              {{ cards()[1]?.label }}
-            </p>
-            <div class="flex-1 flex items-center justify-center">
-              <input
-                type="range"
-                [value]="slider2()"
-                (input)="slider2.set(+$any($event.target).value)"
-                min="100" max="2000" step="50"
-                style="writing-mode:vertical-lr; direction:rtl; -webkit-appearance:slider-vertical; appearance:slider-vertical; height:130px; width:28px; cursor:pointer; accent-color:#f44336;"
-              />
-            </div>
-            <p class="text-xs font-bold" style="color:#f44336;">${{ slider2() | number:'1.0-0' }}</p>
-          </div>
+              <!-- Custom vertical slider: styled track + rotated native range.
+                   Rotating a horizontal range is the cross-browser way to do
+                   vertical sliders since Chromium dropped slider-vertical. -->
+              <div class="relative flex-1 w-9 rounded-full overflow-hidden vertical-slider-wrap"
+                   [attr.data-accent]="i === 0 ? 'blue' : 'red'">
+                <div class="absolute inset-x-0 bottom-0 transition-[height] duration-200"
+                     [class]="i === 0 ? 'slider-fill-blue' : 'slider-fill-red'"
+                     [style.height.%]="barHeightPct(card.amount)"></div>
+                <input
+                  type="range"
+                  [min]="SLIDER_MIN" [max]="SLIDER_MAX" step="10"
+                  [value]="card.amount"
+                  (input)="onSliderInput(card.id, $event)"
+                  [attr.aria-label]="card.label + ' amount'"
+                  class="vertical-range" />
+              </div>
 
-          <!-- Scale right -->
-          <div class="flex flex-col justify-between items-start py-2" style="width:38px;">
-            @for (m of scaleMarks; track m) {
-              <span class="text-xs" style="color:#94a8c5;">{{ m }}</span>
-            }
-          </div>
+              <p class="text-xs font-bold tabular-nums"
+                 [style.color]="i === 0 ? '#1a73e8' : '#f44336'">
+                ${{ card.amount | number:'1.0-0' }}
+              </p>
+            </div>
+          }
         </div>
       </div>
     </div>
