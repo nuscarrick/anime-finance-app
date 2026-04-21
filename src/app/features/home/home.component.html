@@ -117,21 +117,15 @@
                 {{ card.label }}
               </p>
 
-              <!-- Custom vertical slider: styled track + rotated native range.
-                   Rotating a horizontal range is the cross-browser way to do
-                   vertical sliders since Chromium dropped slider-vertical. -->
-              <div class="relative flex-1 w-9 rounded-full overflow-hidden vertical-slider-wrap"
-                   [attr.data-accent]="i === 0 ? 'blue' : 'red'">
-                <div class="absolute inset-x-0 bottom-0 transition-[height] duration-200"
-                     [class]="i === 0 ? 'slider-fill-blue' : 'slider-fill-red'"
-                     [style.height.%]="barHeightPct(card.amount)"></div>
-                <input
-                  type="range"
-                  [min]="SLIDER_MIN" [max]="SLIDER_MAX" step="10"
+              <div class="flex-1 w-9">
+                <app-vertical-slider
                   [value]="card.amount"
-                  (input)="onSliderInput(card.id, $event)"
-                  [attr.aria-label]="card.label + ' amount'"
-                  class="vertical-range" />
+                  [min]="SLIDER_MIN"
+                  [max]="SLIDER_MAX"
+                  [step]="10"
+                  [accent]="i === 0 ? 'blue' : 'red'"
+                  [ariaLabel]="card.label + ' amount'"
+                  (valueChange)="onSliderChange(card.id, $event)" />
               </div>
 
               <p class="text-xs font-bold tabular-nums"

@@ -23,6 +23,7 @@ import {
 import { AuthService } from '../../core/services/auth.service';
 import { FinanceService } from '../../core/services/finance.service';
 import { ValueCard } from '../../core/models/finance.model';
+import { VerticalSliderComponent } from '../../shared/vertical-slider.component';
 
 const SLIDER_MIN = 100;
 const SLIDER_MAX = 2500;
@@ -32,7 +33,7 @@ const SLIDER_MAX = 2500;
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'ion-page' },
-  imports: [DecimalPipe, FormsModule, IonContent, IonIcon],
+  imports: [DecimalPipe, FormsModule, IonContent, IonIcon, VerticalSliderComponent],
   templateUrl: './home.component.html',
 })
 export class HomeComponent {
@@ -73,15 +74,8 @@ export class HomeComponent {
     });
   }
 
-  // Convert card.amount (in SLIDER_MIN..SLIDER_MAX) to 0..100 height for styled bar.
-  barHeightPct(amount: number): number {
-    const clamped = Math.max(SLIDER_MIN, Math.min(SLIDER_MAX, amount));
-    return ((clamped - SLIDER_MIN) / (SLIDER_MAX - SLIDER_MIN)) * 100;
-  }
-
-  onSliderInput(cardId: string, event: Event) {
-    const v = +(event.target as HTMLInputElement).value;
-    this.finance.setSliderValue(cardId, v);
+  onSliderChange(cardId: string, value: number) {
+    this.finance.setSliderValue(cardId, value);
   }
 
   onInputChange(event: Event) {
