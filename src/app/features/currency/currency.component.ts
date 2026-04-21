@@ -2,12 +2,13 @@ import {
   Component,
   signal,
   computed,
-  OnInit,
+  effect,
   ChangeDetectionStrategy,
   inject,
 } from '@angular/core';
 import { DecimalPipe, Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { IonContent, IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
@@ -29,7 +30,7 @@ import { CurrencyRate, Period } from '../../core/models/finance.model';
   imports: [DecimalPipe, IonContent, IonIcon],
   templateUrl: './currency.component.html',
 })
-export class CurrencyComponent implements OnInit {
+export class CurrencyComponent {
   finance = inject(FinanceService);
   auth = inject(AuthService);
   route = inject(ActivatedRoute);
@@ -42,6 +43,10 @@ export class CurrencyComponent implements OnInit {
   period = this.finance.period;
   selected = signal<CurrencyRate>(this.finance.currencies()[0]);
   fromCard = signal<{ label: string; amount: number } | null>(null);
+
+  // Reactive query params — Ionic keeps tab components alive, so ngOnInit
+  // fires only once. We need to pick up fresh card values on every nav.
+  private queryParams = toSignal(this.route.queryParamMap);
 
   periods: Period[] = ['1D', '1W', '1M', '3M', '1Y'];
 
@@ -65,14 +70,16 @@ export class CurrencyComponent implements OnInit {
       logOutOutline,
       closeOutline,
     });
-  }
 
-  ngOnInit() {
-    const label = this.route.snapshot.queryParamMap.get('label');
-    const amount = this.route.snapshot.queryParamMap.get('amount');
-    if (label && amount) {
-      this.fromCard.set({ label, amount: parseFloat(amount) });
-    }
+    effect(() => {
+      const p = this.queryParams();
+      if (!p) return;
+      const label = p.get('label');
+      const amount = p.get('amount');
+      this.fromCard.set(
+        label && amount ? { label, amount: parseFloat(amount) } : null
+      );
+    });
   }
 
   goBack() {
