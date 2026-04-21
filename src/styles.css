@@ -31,6 +31,26 @@
 
   ion-app { background: var(--color-bg-primary); }
   ion-content { --background: transparent; }
+
+  /* Desktop-only: keep Ionic's ion-app filling the viewport (don't fight
+     its contain: layout size style + absolute positioning). Instead,
+     constrain only the visible content layers: the .bg-app wrapper that
+     each page renders inside ion-content, and the bottom tab bar. */
+  @media (min-width: 768px) {
+    body {
+      background: linear-gradient(135deg, #cfe1f6 0%, #8aa6c6 100%);
+    }
+    .bg-app {
+      max-width: 480px;
+      margin-left: auto;
+      margin-right: auto;
+      box-shadow: 0 0 60px rgba(26, 115, 232, 0.25);
+    }
+    ion-tab-bar {
+      width: 480px;
+      align-self: center;
+    }
+  }
 }
 
 @layer utilities {
