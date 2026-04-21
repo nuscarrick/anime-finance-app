@@ -34,17 +34,15 @@
         <div class="flex justify-center mb-5">
           <div class="relative flex-shrink-0" style="width:200px; height:200px;">
             <svg viewBox="0 0 120 120" class="w-full h-full -rotate-90">
-              @for (seg of donutSegments(); track $index; let i = $index) {
+              @for (seg of donutSegments(); track seg.color; let i = $index) {
                 <circle cx="60" cy="60" r="40"
                   fill="none"
                   [attr.stroke]="seg.color"
-                  [attr.stroke-width]="seg.selected ? 22 : 18"
+                  [attr.stroke-width]="selectedTab() === i ? 22 : 18"
                   [attr.stroke-dasharray]="seg.dash"
                   [attr.stroke-dashoffset]="seg.offset"
                   stroke-linecap="butt"
-                  class="donut-seg"
-                  [style.animation-delay.ms]="i * 120"
-                  style="transition: stroke-width 0.25s ease;">
+                  class="donut-seg">
                 </circle>
               }
             </svg>

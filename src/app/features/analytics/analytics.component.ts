@@ -15,7 +15,6 @@ interface DonutSegment {
   color: string;
   dash: string;
   offset: number;
-  selected: boolean;
 }
 
 @Component({
@@ -39,24 +38,22 @@ export class AnalyticsComponent {
       this.analytics().categories[0]
   );
 
-  // Donut center shows the selected category share, matching the ring.
   donutCenterPct = computed(() => this.selectedCategory().percentage);
 
   readonly DONUT_RADIUS = 40;
   readonly DONUT_CIRCUMFERENCE = 2 * Math.PI * this.DONUT_RADIUS;
 
+  // Geometry-only. Does not depend on selectedTab, so clicking category
+  // tabs never recomputes the list or retriggers the CSS sweep.
   donutSegments = computed<DonutSegment[]>(() => {
     const c = this.DONUT_CIRCUMFERENCE;
-    const categories = this.analytics().categories;
-    const selected = this.selectedTab();
     let offset = 0;
-    return categories.map((cat, i) => {
+    return this.analytics().categories.map((cat) => {
       const dash = (cat.percentage / 100) * c;
       const seg: DonutSegment = {
         color: cat.color,
         dash: `${dash} ${c - dash}`,
         offset: -offset,
-        selected: i === selected,
       };
       offset += dash;
       return seg;
