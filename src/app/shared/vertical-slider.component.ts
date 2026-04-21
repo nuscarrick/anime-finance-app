@@ -13,13 +13,8 @@ type Accent = 'blue' | 'red';
 
 /**
  * Pointer-driven vertical slider. Dragging up increases the value.
- * Uses Pointer Events (touch + mouse + pen in one API), setPointerCapture
- * so drags continue when the pointer leaves the track, and clamps to
- * [min, max] snapped to step.
- *
- * Chose a custom implementation over <input type=range> + rotate/writing-mode
- * because both have subtle hit-area or direction issues that make the
- * thumb jump unpredictably during drag.
+ * Wide hit-area with a slim centered rail and a prominent circular thumb
+ * that overflows horizontally — matches the reference design.
  */
 @Component({
   selector: 'app-vertical-slider',
@@ -28,7 +23,7 @@ type Accent = 'blue' | 'red';
   template: `
     <div
       #track
-      class="vslider-track"
+      class="vslider-hit"
       [attr.data-accent]="accent()"
       (pointerdown)="onPointerDown($event)"
       (pointermove)="onPointerMove($event)"
@@ -42,7 +37,9 @@ type Accent = 'blue' | 'red';
       tabindex="0"
       (keydown.arrowup)="nudge(1, $event)"
       (keydown.arrowdown)="nudge(-1, $event)">
-      <div class="vslider-fill" [style.height.%]="fillPct()"></div>
+      <div class="vslider-rail">
+        <div class="vslider-fill" [style.height.%]="fillPct()"></div>
+      </div>
       <div class="vslider-thumb" [style.bottom.%]="fillPct()"
            [class.is-dragging]="dragging()"></div>
     </div>
@@ -53,23 +50,30 @@ type Accent = 'blue' | 'red';
       width: 100%;
       height: 100%;
     }
-    .vslider-track {
+    .vslider-hit {
       position: relative;
       width: 100%;
       height: 100%;
-      border-radius: 999px;
-      background: rgba(26, 115, 232, 0.08);
-      border: 1px solid rgba(26, 115, 232, 0.12);
-      overflow: hidden;
       cursor: grab;
       touch-action: none;
       user-select: none;
       outline: none;
+      display: flex;
+      justify-content: center;
     }
-    .vslider-track:focus-visible {
+    .vslider-hit:focus-visible .vslider-rail {
       box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.25);
     }
-    .vslider-track:active { cursor: grabbing; }
+    .vslider-hit:active { cursor: grabbing; }
+    .vslider-rail {
+      position: relative;
+      width: 10px;
+      height: 100%;
+      border-radius: 999px;
+      background: rgba(26, 115, 232, 0.10);
+      border: 1px solid rgba(26, 115, 232, 0.14);
+      overflow: hidden;
+    }
     .vslider-fill {
       position: absolute;
       left: 0; right: 0; bottom: 0;
@@ -77,36 +81,36 @@ type Accent = 'blue' | 'red';
       pointer-events: none;
       transition: height 120ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
     }
-    .vslider-track[data-accent="blue"] .vslider-fill {
+    .vslider-hit[data-accent="blue"] .vslider-fill {
       background: linear-gradient(180deg, #5b9ef7, #1a73e8);
     }
-    .vslider-track[data-accent="red"] .vslider-fill {
+    .vslider-hit[data-accent="red"] .vslider-fill {
       background: linear-gradient(180deg, #ff7c6e, #f44336);
     }
     .vslider-thumb {
       position: absolute;
       left: 50%;
-      width: 22px; height: 22px;
+      width: 30px;
+      height: 30px;
       border-radius: 50%;
-      background: white;
-      border: 3px solid #1a73e8;
-      box-shadow: 0 2px 6px rgba(26, 115, 232, 0.4);
+      background: #ffffff;
+      border: 4px solid #1a73e8;
+      box-shadow: 0 4px 12px rgba(26, 115, 232, 0.45), 0 1px 2px rgba(0, 0, 0, 0.08);
       transform: translate(-50%, 50%);
       pointer-events: none;
       transition: transform 120ms, bottom 120ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
     }
-    .vslider-track[data-accent="red"] .vslider-thumb {
+    .vslider-hit[data-accent="red"] .vslider-thumb {
       border-color: #f44336;
-      box-shadow: 0 2px 6px rgba(244, 67, 54, 0.4);
+      box-shadow: 0 4px 12px rgba(244, 67, 54, 0.45), 0 1px 2px rgba(0, 0, 0, 0.08);
     }
     .vslider-thumb.is-dragging {
-      transform: translate(-50%, 50%) scale(1.15);
+      transform: translate(-50%, 50%) scale(1.12);
       transition: transform 80ms;
     }
   `],
 })
 export class VerticalSliderComponent {
-  // Inputs
   value = input.required<number>();
   min = input<number>(0);
   max = input<number>(100);
@@ -114,7 +118,6 @@ export class VerticalSliderComponent {
   accent = input<Accent>('blue');
   ariaLabel = input<string>('Value');
 
-  // Output
   valueChange = output<number>();
 
   private track = viewChild.required<ElementRef<HTMLDivElement>>('track');
@@ -152,7 +155,6 @@ export class VerticalSliderComponent {
 
   private updateFromEvent(e: PointerEvent) {
     const rect = this.track().nativeElement.getBoundingClientRect();
-    // Distance from bottom of track, clamped to [0, height].
     const y = Math.max(0, Math.min(rect.height, rect.bottom - e.clientY));
     const pct = rect.height === 0 ? 0 : y / rect.height;
     const raw = this.min() + pct * (this.max() - this.min());
