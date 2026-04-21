@@ -90,22 +90,22 @@ type Accent = 'blue' | 'red';
     .vslider-thumb {
       position: absolute;
       left: 50%;
-      width: 30px;
-      height: 30px;
+      width: 20px;
+      height: 20px;
       border-radius: 50%;
       background: #ffffff;
-      border: 4px solid #1a73e8;
-      box-shadow: 0 4px 12px rgba(26, 115, 232, 0.45), 0 1px 2px rgba(0, 0, 0, 0.08);
+      border: 3px solid #1a73e8;
+      box-shadow: 0 3px 8px rgba(26, 115, 232, 0.4), 0 1px 2px rgba(0, 0, 0, 0.08);
       transform: translate(-50%, 50%);
       pointer-events: none;
       transition: transform 120ms, bottom 120ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
     }
     .vslider-hit[data-accent="red"] .vslider-thumb {
       border-color: #f44336;
-      box-shadow: 0 4px 12px rgba(244, 67, 54, 0.45), 0 1px 2px rgba(0, 0, 0, 0.08);
+      box-shadow: 0 3px 8px rgba(244, 67, 54, 0.4), 0 1px 2px rgba(0, 0, 0, 0.08);
     }
     .vslider-thumb.is-dragging {
-      transform: translate(-50%, 50%) scale(1.12);
+      transform: translate(-50%, 50%) scale(1.15);
       transition: transform 80ms;
     }
   `],

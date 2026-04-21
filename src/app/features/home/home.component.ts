@@ -25,8 +25,8 @@ import { FinanceService } from '../../core/services/finance.service';
 import { ValueCard } from '../../core/models/finance.model';
 import { VerticalSliderComponent } from '../../shared/vertical-slider.component';
 
-const SLIDER_MIN = 100;
-const SLIDER_MAX = 2500;
+const SLIDER_MIN = 0;
+const SLIDER_MAX = 2000;
 
 @Component({
   selector: 'app-home',
@@ -62,7 +62,7 @@ export class HomeComponent {
   });
 
   showMenu = signal(false);
-  scaleMarks = [2500, 2000, 1500, 1000, 500, 100];
+  scaleMarks = [2000, 1500, 1000, 500, 0];
 
   constructor() {
     addIcons({

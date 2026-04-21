@@ -68,6 +68,13 @@
     background: linear-gradient(160deg, #e8f4ff 0%, #d4eafe 60%, #c8e0ff 100%);
     min-height: 100%;
   }
+
+  .slider-panel {
+    background: linear-gradient(160deg, rgba(26, 115, 232, 0.10) 0%, rgba(91, 158, 247, 0.06) 100%);
+    border: 1px solid rgba(26, 115, 232, 0.14);
+    border-radius: 1.25rem;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 4px 16px rgba(26, 115, 232, 0.08);
+  }
 }
 
 /* Page transition animations */

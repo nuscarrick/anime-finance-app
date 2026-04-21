@@ -100,7 +100,12 @@ export class FinanceService {
   private loadSliderState(): Record<string, number> {
     try {
       const raw = localStorage.getItem(SLIDER_STATE_KEY);
-      return raw ? (JSON.parse(raw) as Record<string, number>) : {};
+      if (!raw) return {};
+      const parsed = JSON.parse(raw) as Record<string, number>;
+      // Clamp persisted values to current slider range (max was recently lowered).
+      return Object.fromEntries(
+        Object.entries(parsed).map(([k, v]) => [k, Math.max(0, Math.min(2000, v))])
+      );
     } catch {
       return {};
     }
@@ -187,7 +192,7 @@ const INITIAL_CARDS: ValueCard[] = [
   {
     id: 'card-2',
     label: 'Savings',
-    amount: 2100,
+    amount: 1800,
     currency: 'USD',
     trend: 'up',
     trendPercent: 2.8,
