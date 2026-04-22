@@ -61,6 +61,8 @@ export class HomeComponent {
     return 'evening';
   });
 
+  slidersModified = computed(() => Object.keys(this.finance.sliderValues()).length > 0);
+
   showMenu = signal(false);
   scaleMarks = [2000, 1500, 1000, 500, 0];
 
