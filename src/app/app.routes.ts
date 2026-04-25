@@ -1,21 +1,14 @@
 import { inject } from '@angular/core';
-import { Routes, Router } from '@angular/router';
+import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
 import { AuthService } from './core/services/auth.service';
-
-// Root redirect: send authenticated users to /app/home, anonymous users to /login.
-const rootRedirect = () => {
-  const auth = inject(AuthService);
-  const router = inject(Router);
-  return router.createUrlTree([auth.isLoggedIn() ? '/app/home' : '/login']);
-};
 
 export const routes: Routes = [
   {
     path: '',
     pathMatch: 'full',
-    canActivate: [rootRedirect],
-    children: [],
+    redirectTo: () =>
+      inject(AuthService).isLoggedIn() ? '/app/home' : '/login',
   },
   {
     path: 'login',
