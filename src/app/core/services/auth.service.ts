@@ -1,4 +1,4 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, signal, computed, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { tap } from 'rxjs/operators';
@@ -11,12 +11,13 @@ const USER_KEY = 'af_user';
 export class AuthService {
   private readonly API = 'https://dummyjson.com/auth';
 
+  private http = inject(HttpClient);
+  private router = inject(Router);
+
   private _user = signal<User | null>(this.loadStoredUser());
   readonly user = this._user.asReadonly();
   readonly isLoggedIn = computed(() => !!this._user());
   readonly token = computed(() => this._user()?.accessToken ?? null);
-
-  constructor(private http: HttpClient, private router: Router) {}
 
   login(credentials: LoginRequest) {
     return this.http

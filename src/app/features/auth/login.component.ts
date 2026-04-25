@@ -3,6 +3,7 @@ import {
   signal,
   computed,
   ChangeDetectionStrategy,
+  inject,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import {
@@ -43,7 +44,10 @@ export class LoginComponent {
 
   canSubmit = computed(() => this.username().length > 0 && this.password().length > 0);
 
-  constructor(private auth: AuthService, private router: Router) {
+  private auth = inject(AuthService);
+  private router = inject(Router);
+
+  constructor() {
     addIcons({ eyeOutline, eyeOffOutline, lockClosedOutline, personOutline });
   }
 
