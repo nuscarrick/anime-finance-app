@@ -34,10 +34,11 @@
               class="absolute left-3 top-1/2 -translate-y-1/2 z-10"
               style="color:#1a73e8; font-size:18px;"></ion-icon>
             <input
+              #usernameInput
               type="text"
               [value]="username()"
-              (input)="username.set($any($event.target).value)"
-              (change)="username.set($any($event.target).value)"
+              (input)="username.set(usernameInput.value)"
+              (change)="username.set(usernameInput.value)"
               placeholder="emilys"
               autocomplete="username"
               class="w-full pl-10 pr-4 py-3 rounded-xl text-sm font-medium outline-none transition-all login-field"
@@ -56,10 +57,11 @@
               class="absolute left-3 top-1/2 -translate-y-1/2 z-10"
               style="color:#1a73e8; font-size:18px;"></ion-icon>
             <input
+              #passwordInput
               [type]="showPassword() ? 'text' : 'password'"
               [value]="password()"
-              (input)="password.set($any($event.target).value)"
-              (change)="password.set($any($event.target).value)"
+              (input)="password.set(passwordInput.value)"
+              (change)="password.set(passwordInput.value)"
               placeholder="••••••••"
               autocomplete="current-password"
               class="w-full pl-10 pr-10 py-3 rounded-xl text-sm font-medium outline-none transition-all login-field"
