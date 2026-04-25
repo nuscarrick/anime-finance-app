@@ -4,7 +4,6 @@ import { Router } from '@angular/router';
 import { tap } from 'rxjs/operators';
 import { AuthResponse, LoginRequest, User } from '../models/auth.model';
 
-const TOKEN_KEY = 'af_access_token';
 const USER_KEY = 'af_user';
 
 @Injectable({ providedIn: 'root' })
@@ -38,7 +37,6 @@ export class AuthService {
             accessToken: res.accessToken,
           };
           this._user.set(user);
-          localStorage.setItem(TOKEN_KEY, res.accessToken);
           localStorage.setItem(USER_KEY, JSON.stringify(user));
         })
       );
@@ -46,7 +44,6 @@ export class AuthService {
 
   logout() {
     this._user.set(null);
-    localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(USER_KEY);
     this.router.navigate(['/login']);
   }
