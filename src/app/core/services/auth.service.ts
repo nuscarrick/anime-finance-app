@@ -3,12 +3,13 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { tap } from 'rxjs/operators';
 import { AuthResponse, LoginRequest, User } from '../models/auth.model';
+import { environment } from '../../../environments/environment';
 
 const USER_KEY = 'af_user';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private readonly API = 'https://dummyjson.com/auth';
+  private readonly API = `${environment.apiBaseUrl}/auth`;
 
   private http = inject(HttpClient);
   private router = inject(Router);

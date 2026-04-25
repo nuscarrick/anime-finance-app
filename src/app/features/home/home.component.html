@@ -6,7 +6,7 @@
       <div class="flex items-center gap-3 min-w-0">
         @defer (on idle) {
           <div class="relative flex-shrink-0">
-            <img [src]="user()?.image || 'https://dummyjson.com/icon/emilys/128'"
+            <img [src]="user()?.image || defaultAvatar"
                  class="w-11 h-11 rounded-full object-cover"
                  style="border: 2.5px solid #1a73e8; box-shadow: 0 0 0 4px rgba(26,115,232,0.15);"
                  alt="avatar" />

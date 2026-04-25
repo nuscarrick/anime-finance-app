@@ -24,6 +24,7 @@ import { AuthService } from '../../core/services/auth.service';
 import { FinanceService } from '../../core/services/finance.service';
 import { ValueCard } from '../../core/models/finance.model';
 import { VerticalSliderComponent } from '../../shared/vertical-slider.component';
+import { environment } from '../../../environments/environment';
 
 const SLIDER_MIN = 0;
 const SLIDER_MAX = 2000;
@@ -43,6 +44,7 @@ export class HomeComponent {
 
   readonly SLIDER_MIN = SLIDER_MIN;
   readonly SLIDER_MAX = SLIDER_MAX;
+  readonly defaultAvatar = `${environment.apiBaseUrl}/icon/emilys/128`;
 
   user = this.auth.user;
   cards = this.finance.cards;
