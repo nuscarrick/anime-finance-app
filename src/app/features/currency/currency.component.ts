@@ -119,7 +119,7 @@ export class CurrencyComponent {
   barHeight(code: string): number {
     const data = this.finance.periodChartData()[code] ?? [];
     const last = data.at(-1) ?? 1;
-    const max = Math.max(...Object.values(this.finance.periodChartData()).map((d) => d.at(-1) ?? 1));
+    const max = Math.max(...Object.values(this.finance.periodChartData()).map((d) => d.at(-1) ?? 1)) || 1;
     return Math.max(24, Math.round((last / max) * 96));
   }
 
