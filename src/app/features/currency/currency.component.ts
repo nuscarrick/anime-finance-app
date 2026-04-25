@@ -24,7 +24,6 @@ import { CurrencyRate, Period } from '../../core/models/finance.model';
 
 @Component({
   selector: 'app-currency',
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'ion-page' },
   imports: [DecimalPipe, IonContent, IonIcon],

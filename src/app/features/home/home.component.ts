@@ -30,7 +30,6 @@ const SLIDER_MAX = 2000;
 
 @Component({
   selector: 'app-home',
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'ion-page' },
   imports: [DecimalPipe, FormsModule, IonContent, IonIcon, VerticalSliderComponent],

@@ -18,7 +18,6 @@ type Accent = 'blue' | 'red';
  */
 @Component({
   selector: 'app-vertical-slider',
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './vertical-slider.component.html',
   styles: [`

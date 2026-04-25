@@ -16,7 +16,6 @@ import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-login',
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'ion-page' },
   imports: [IonContent, IonSpinner, IonIcon],

@@ -5,7 +5,6 @@ import { cashOutline, homeOutline, barChartOutline } from 'ionicons/icons';
 
 @Component({
   selector: 'app-tabs',
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [IonTabs, IonTabBar, IonTabButton, IonIcon, IonLabel],
   templateUrl: './tabs.component.html',

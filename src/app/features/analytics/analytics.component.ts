@@ -19,7 +19,6 @@ interface DonutSegment {
 
 @Component({
   selector: 'app-analytics',
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'ion-page' },
   imports: [DecimalPipe, IonContent, IonIcon],
