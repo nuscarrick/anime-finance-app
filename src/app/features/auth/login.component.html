@@ -42,8 +42,6 @@
               placeholder="emilys"
               autocomplete="username"
               class="w-full pl-10 pr-4 py-3 rounded-xl text-sm font-medium outline-none transition-all login-field"
-              (focus)="onFocus($event)"
-              (blur)="onBlur($event)"
               (keydown.enter)="onLogin()"
             />
           </div>
@@ -65,8 +63,6 @@
               placeholder="••••••••"
               autocomplete="current-password"
               class="w-full pl-10 pr-10 py-3 rounded-xl text-sm font-medium outline-none transition-all login-field"
-              (focus)="onFocus($event)"
-              (blur)="onBlur($event)"
               (keydown.enter)="onLogin()"
             />
             <button (click)="togglePassword()"

@@ -30,8 +30,15 @@ import { AuthService } from '../../core/services/auth.service';
       background: rgba(26, 115, 232, 0.06);
       border: 1.5px solid rgba(26, 115, 232, 0.18);
       color: #1e2d5a;
+      transition: border-color 160ms ease, box-shadow 160ms ease;
     }
     .login-field::placeholder { color: #b0c4d8; }
+    .login-field:focus,
+    .login-field:focus-visible {
+      border-color: rgba(26, 115, 232, 0.6);
+      box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.12);
+      outline: none;
+    }
   `],
 })
 export class LoginComponent {
@@ -53,18 +60,6 @@ export class LoginComponent {
 
   togglePassword() {
     this.showPassword.update((v) => !v);
-  }
-
-  onFocus(e: Event) {
-    const el = e.target as HTMLElement;
-    el.style.borderColor = 'rgba(26,115,232,0.6)';
-    el.style.boxShadow = '0 0 0 3px rgba(26,115,232,0.12)';
-  }
-
-  onBlur(e: Event) {
-    const el = e.target as HTMLElement;
-    el.style.borderColor = 'rgba(26,115,232,0.18)';
-    el.style.boxShadow = 'none';
   }
 
   onLogin() {
