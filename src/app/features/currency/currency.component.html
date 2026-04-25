@@ -130,7 +130,7 @@
           @for (currency of currencies(); track currency.code + '-' + barKey()) {
             <div class="flex-1 flex flex-col items-center gap-2">
               <div class="w-full rounded-2xl bar-animate"
-                   [style.height.px]="barHeight(currency.code)"
+                   [style.height.px]="barHeights()[currency.code]"
                    style="background:linear-gradient(180deg,#5b9ef7,#1a73e8); box-shadow:0 4px 12px rgba(26,115,232,0.25);">
               </div>
               <span class="text-xs font-semibold tabular-nums" style="color:#94a8c5;">{{ currency.code }}</span>

@@ -115,17 +115,19 @@ export class CurrencyComponent {
     return bgs[code] ?? 'rgba(108,99,255,0.15)';
   }
 
-  // Bar height derived from latest value in period window (keeps bars meaningful).
-  barHeight(code: string): number {
-    const data = this.finance.periodChartData()[code] ?? [];
-    const last = data.at(-1) ?? 1;
-    const max = Math.max(...Object.values(this.finance.periodChartData()).map((d) => d.at(-1) ?? 1)) || 1;
-    return Math.max(24, Math.round((last / max) * 96));
-  }
-
-  miniSparkline(c: CurrencyRate): string {
-    return this.buildLinePath(c.chartData.slice(-12), 60, 30);
-  }
+  // Bar heights keyed by currency code. Memoized via computed so the
+  // max-scan runs once per periodChartData tick instead of once per
+  // bar per change-detection pass.
+  readonly barHeights = computed<Record<string, number>>(() => {
+    const map = this.finance.periodChartData();
+    const lasts: Array<readonly [string, number]> = Object.entries(map).map(
+      ([code, data]) => [code, data.at(-1) ?? 1] as const,
+    );
+    const max = Math.max(...lasts.map(([, v]) => v)) || 1;
+    return Object.fromEntries(
+      lasts.map(([code, v]) => [code, Math.max(24, Math.round((v / max) * 96))]),
+    );
+  });
 
   private buildLinePath(data: number[], w: number, h: number): string {
     if (!data.length) return '';
