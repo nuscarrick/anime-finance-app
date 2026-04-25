@@ -72,9 +72,13 @@
         <span class="text-base font-bold" style="color:#1a73e8;">$</span>
         <input
           type="number"
+          min="0"
+          step="1"
+          inputmode="numeric"
           [value]="inputAmount()"
           (input)="onInputChange($event)"
-          class="flex-1 text-lg font-semibold outline-none bg-transparent min-w-0"
+          (keydown)="blockNonPositiveKeys($event)"
+          class="no-spin flex-1 text-lg font-semibold outline-none bg-transparent min-w-0"
           style="color:#1e2d5a;"
           placeholder="0"
         />

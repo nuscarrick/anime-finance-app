@@ -80,7 +80,17 @@ export class HomeComponent {
   }
 
   onInputChange(event: Event) {
-    this.finance.setInputAmount(+(event.target as HTMLInputElement).value);
+    const raw = (event.target as HTMLInputElement).value;
+    const parsed = raw === '' ? 0 : Number(raw);
+    const clamped = Number.isFinite(parsed) ? Math.max(0, parsed) : 0;
+    this.finance.setInputAmount(clamped);
+  }
+
+  blockNonPositiveKeys(e: KeyboardEvent) {
+    // Prevent users from typing a minus, plus, or exponent — the input is
+    // always a non-negative integer amount. Still allows navigation keys,
+    // digits, backspace, etc.
+    if (['-', '+', 'e', 'E'].includes(e.key)) e.preventDefault();
   }
 
   navigateToCurrency(card: ValueCard) {

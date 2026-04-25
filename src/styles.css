@@ -187,6 +187,14 @@
 .donut-seg:nth-of-type(4) { animation-delay: 360ms; }
 .donut-seg:nth-of-type(5) { animation-delay: 480ms; }
 
+/* Number input — hide spinner arrows (Chrome/Safari/Firefox) */
+.no-spin::-webkit-outer-spin-button,
+.no-spin::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.no-spin { -moz-appearance: textfield; appearance: textfield; }
+
 /* Scrollbar */
 ::-webkit-scrollbar       { width: 4px; }
 ::-webkit-scrollbar-track { background: #d4eafe; }
