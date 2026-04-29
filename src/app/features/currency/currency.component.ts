@@ -17,10 +17,12 @@ import {
   arrowBackOutline,
   logOutOutline,
   closeOutline,
+  chevronDownOutline,
 } from 'ionicons/icons';
 import { AuthService } from '../../core/services/auth.service';
 import { FinanceService } from '../../core/services/finance.service';
 import { CurrencyRate, Period } from '../../core/models/finance.model';
+import { CHART, PLACEHOLDER } from '../../core/constants/ui.constants';
 
 @Component({
   selector: 'app-currency',
@@ -37,6 +39,9 @@ export class CurrencyComponent {
   location = inject(Location);
 
   showMenu = signal(false);
+  chartOpen = signal(true);
+
+  readonly placeholder = PLACEHOLDER;
 
   currencies = this.finance.currencies;
   period = this.finance.period;
@@ -49,17 +54,51 @@ export class CurrencyComponent {
 
   periods: Period[] = ['1D', '1W', '1M', '3M', '1Y'];
 
+  // Per-currency bar colors (mockup uses a single blue palette — different
+  // shades, not different hues).
+  readonly barColors: Record<string, { light: string; dark: string }> = {
+    USD: { light: '#5b9ef7', dark: '#1a73e8' },
+    EUR: { light: '#9bc1f5', dark: '#4a90e2' },
+    GBP: { light: '#c7dffb', dark: '#6ea8e8' },
+  };
+
+  readonly chartYear = new Date().getFullYear();
+
   // Chart data sliced by period; re-keyed so animations can re-trigger.
   private chartData = computed<number[]>(() => {
     const map = this.finance.periodChartData();
     return map[this.selected().code] ?? [];
   });
 
-  chartLinePath = computed(() => this.buildLinePath(this.chartData(), 200, 60));
-  chartFillPath = computed(() => this.buildFillPath(this.chartData(), 200, 60));
-
   // Keys change on every data tick so @for re-creates DOM → bar animation re-runs.
   barKey = computed(() => `${this.period()}-${this.chartData().length}-${this.chartData().at(-1)}`);
+
+  // Bars for the chart card: N buckets sampled from the selected currency's
+  // chart data, normalized to a 0..1 height ratio for rendering, then grouped
+  // into pairs of two so each pair renders as adjacent bars (matches mockup).
+  readonly chartPairs = computed<Array<[number, number]>>(() => {
+    const data = this.chartData();
+    if (!data.length) return [];
+    const N = CHART.bucketCount;
+    const slice = data.slice(-N);
+    const padding: number[] = Array(Math.max(0, N - slice.length)).fill(slice[0] ?? 0);
+    const points = [...padding, ...slice];
+    const min = Math.min(...points);
+    const max = Math.max(...points);
+    const range = max - min || 1;
+    const heights = points.map((v) => 0.25 + ((v - min) / range) * 0.75);
+    const pairs: Array<[number, number]> = [];
+    for (let i = 0; i < heights.length; i += CHART.pairSize) {
+      pairs.push([heights[i], heights[i + 1] ?? heights[i]]);
+    }
+    return pairs;
+  });
+
+  readonly maxBarHeightPx = CHART.maxBarHeightPx;
+
+  toggleChart() {
+    this.chartOpen.update((v) => !v);
+  }
 
   constructor() {
     addIcons({
@@ -68,6 +107,7 @@ export class CurrencyComponent {
       arrowBackOutline,
       logOutOutline,
       closeOutline,
+      chevronDownOutline,
     });
 
     effect(() => {
@@ -129,22 +169,4 @@ export class CurrencyComponent {
     );
   });
 
-  private buildLinePath(data: number[], w: number, h: number): string {
-    if (!data.length) return '';
-    const min = Math.min(...data);
-    const max = Math.max(...data);
-    const range = max - min || 1;
-    const pts = data.map((v, i) => {
-      const x = (i / Math.max(1, data.length - 1)) * w;
-      const y = h - ((v - min) / range) * h * 0.8 - h * 0.1;
-      return `${x},${y}`;
-    });
-    return 'M ' + pts.join(' L ');
-  }
-
-  private buildFillPath(data: number[], w: number, h: number): string {
-    const line = this.buildLinePath(data, w, h);
-    if (!line) return '';
-    return `${line} L ${w},${h} L 0,${h} Z`;
-  }
 }

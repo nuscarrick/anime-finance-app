@@ -3,6 +3,7 @@ import { inject } from '@angular/core';
 import { catchError, throwError } from 'rxjs';
 import { ToastController } from '@ionic/angular/standalone';
 import { AuthService } from '../services/auth.service';
+import { TIMING } from '../constants/ui.constants';
 
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const toastCtrl = inject(ToastController);
@@ -20,7 +21,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
           void toastCtrl
             .create({
               message: messageFor(err),
-              duration: 2500,
+              duration: TIMING.toastDurationMs,
               position: 'top',
               color: 'danger',
             })

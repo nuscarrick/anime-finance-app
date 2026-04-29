@@ -22,6 +22,7 @@ export const routes: Routes = [
       import('./features/tabs/tabs.component').then((m) => m.TabsComponent),
     children: [
       { path: '', redirectTo: 'home', pathMatch: 'full' },
+      { path: 'add', redirectTo: 'home', pathMatch: 'full' },
       {
         path: 'currency',
         loadComponent: () =>

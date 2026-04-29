@@ -1,27 +1,20 @@
 <ion-content (click)="showMenu.set(false)">
-  <div class="bg-app pb-28 slide-from-left">
+  <div class="bg-app slide-from-left flex flex-col h-full">
 
-    <!-- Header -->
-    <div class="flex items-center justify-between px-5 pt-6 pb-3">
-      <button (click)="goBack()"
-              class="w-10 h-10 rounded-full flex items-center justify-center transition-all active:scale-90"
-              style="background:rgba(255,255,255,0.85); box-shadow:0 2px 8px rgba(26,115,232,0.1);">
-        <ion-icon name="arrow-back-outline" style="color:#1e2d5a; font-size:20px;"></ion-icon>
+    <!-- Header (33/44 padding, 66px circular buttons, blue dots menu) -->
+    <div class="flex items-center justify-between page-header">
+      <button (click)="goBack()" class="btn-circle-66" aria-label="Back">
+        <ion-icon name="arrow-back-outline" class="text-navy icon-xl"></ion-icon>
       </button>
 
       <div class="relative" (click)="$event.stopPropagation()">
-        <button (click)="showMenu.set(!showMenu())"
-                class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg transition-all active:scale-90"
-                style="background:rgba(255,255,255,0.85); color:#1e2d5a; letter-spacing:1px; box-shadow:0 2px 8px rgba(26,115,232,0.1);">
-          ···
+        <button (click)="showMenu.set(!showMenu())" class="btn-circle-66" aria-label="Menu">
+          <span class="menu-dots"><span></span><span></span><span></span></span>
         </button>
         @if (showMenu()) {
-          <div class="absolute right-0 top-12 rounded-2xl overflow-hidden z-50 menu-pop"
-               style="background:white; box-shadow:0 8px 24px rgba(26,115,232,0.15); min-width:140px; border:1px solid rgba(26,115,232,0.08);">
-            <button (click)="signOut()"
-                    class="w-full px-4 py-3 text-left text-sm font-semibold flex items-center gap-2 hover:bg-red-50 transition-all"
-                    style="color:#f44336;">
-              <ion-icon name="log-out-outline" style="font-size:16px;"></ion-icon>
+          <div class="menu-popover menu-pop top-[74px]">
+            <button (click)="signOut()" class="is-danger">
+              <ion-icon name="log-out-outline" class="icon-sm"></ion-icon>
               Sign Out
             </button>
           </div>
@@ -31,141 +24,100 @@
 
     <!-- fromCard context banner -->
     @if (fromCard(); as fc) {
-      <div class="px-5 mb-4">
-        <div class="flex items-center gap-3 px-4 py-3 rounded-2xl menu-pop"
-             style="background:rgba(26,115,232,0.08); border:1px solid rgba(26,115,232,0.18);">
+      <div class="mb-4 page-content-x">
+        <div class="from-card-banner flex items-center gap-3 px-4 py-3 rounded-2xl menu-pop">
           <div class="flex-1 min-w-0">
-            <p class="text-[11px] font-semibold uppercase tracking-wider truncate" style="color:#1a73e8;">
+            <p class="text-[11px] font-semibold uppercase tracking-wider truncate text-blue">
               From {{ fc.label }}
             </p>
-            <p class="text-sm font-bold tabular-nums truncate" style="color:#1e2d5a;">
+            <p class="text-sm font-bold tabular-nums truncate text-navy">
               ${{ fc.amount | number:'1.0-0' }}
             </p>
           </div>
           <button (click)="clearFromCard()"
-                  class="w-7 h-7 rounded-full flex items-center justify-center active:scale-90 transition-all"
-                  style="background:rgba(255,255,255,0.7);"
+                  class="from-card-banner-close w-7 h-7 rounded-full flex items-center justify-center active:scale-90 transition-all"
                   aria-label="Clear context">
-            <ion-icon name="close-outline" style="color:#1a73e8; font-size:16px;"></ion-icon>
+            <ion-icon name="close-outline" class="text-blue icon-sm"></ion-icon>
           </button>
         </div>
       </div>
     }
 
-    <!-- Currency list -->
-    <div class="px-5 mb-5">
-      <div class="glass-card overflow-hidden">
-        <div class="grid px-4 py-3 gap-2"
-             style="grid-template-columns:2fr 1fr 1fr; border-bottom:1px solid rgba(26,115,232,0.08);">
-          <p class="text-xs font-bold" style="color:#1a73e8;">Currency</p>
-          <p class="text-xs font-bold text-center" style="color:#1a73e8;">Buy</p>
-          <p class="text-xs font-bold text-right" style="color:#1a73e8;">Sell</p>
-        </div>
-
-        @for (currency of currencies(); track currency.code) {
-          <button
-            (click)="selectCurrency(currency)"
-            class="w-full grid px-4 py-3.5 gap-2 text-left transition-all duration-200 active:opacity-70"
-            style="grid-template-columns:2fr 1fr 1fr;"
-            [style.background]="selected().code === currency.code ? 'rgba(26,115,232,0.09)' : 'transparent'">
-
-            <div class="flex items-center gap-2.5 min-w-0">
-              <div class="w-9 h-9 rounded-full flex items-center justify-center text-base flex-shrink-0"
-                   [style.background]="currencyBg(currency.code)">
-                {{ currencyFlag(currency.code) }}
-              </div>
-              <div class="min-w-0">
-                <p class="text-sm font-bold leading-tight truncate" style="color:#1e2d5a;">{{ currency.code }}</p>
-                <p class="text-xs leading-tight truncate" style="color:#94a8c5;">{{ currency.name }}</p>
-              </div>
-            </div>
-
-            <div class="text-center self-center">
-              <p class="text-sm font-bold leading-tight tabular-nums" style="color:#1e2d5a;">
-                {{ (currency.rate * 0.993) | number:'1.3-4' }}
-              </p>
-              <div class="flex items-center justify-center gap-0.5">
-                <span class="text-xs font-bold leading-none"
-                      [style.color]="currency.changePercent >= 0 ? '#22c55e' : '#f44336'">
-                  {{ currency.changePercent >= 0 ? '▲' : '▼' }}
-                </span>
-                <p class="text-xs font-semibold leading-tight tabular-nums"
-                   [style.color]="currency.changePercent >= 0 ? '#22c55e' : '#f44336'">
-                  {{ (currency.changePercent * 0.9) | number:'1.2-2' }}%
-                </p>
-              </div>
-            </div>
-
-            <div class="text-right self-center">
-              <p class="text-sm font-bold leading-tight tabular-nums" style="color:#1e2d5a;">
-                {{ (currency.rate * 1.007) | number:'1.3-4' }}
-              </p>
-              <div class="flex items-center justify-end gap-0.5">
-                <span class="text-xs font-bold leading-none"
-                      [style.color]="currency.changePercent >= 0 ? '#22c55e' : '#f44336'">
-                  {{ currency.changePercent >= 0 ? '▲' : '▼' }}
-                </span>
-                <p class="text-xs font-semibold leading-tight tabular-nums"
-                   [style.color]="currency.changePercent >= 0 ? '#22c55e' : '#f44336'">
-                  {{ (currency.changePercent * 1.1) | number:'1.2-2' }}%
-                </p>
-              </div>
-            </div>
-          </button>
+    <!-- Column headers (matches mockup: Lorem | Ipsum | Dolor) -->
+    <div class="mb-3 page-content-x mt-6">
+      <div class="grid grid-cols-3 items-center">
+        @for (label of placeholder.triadLabels; track label) {
+          <span class="text-base font-bold text-center text-navy">{{ label }}</span>
         }
       </div>
     </div>
 
-    <!-- Chart section -->
-    <div class="px-5">
-      <div class="glass-card p-4">
-        <div class="flex items-center justify-between mb-4">
-          <p class="text-sm font-bold" style="color:#1e2d5a;">Volume &middot; {{ selected().code }}</p>
-          <span class="text-xs font-semibold px-2.5 py-1 rounded-full"
-                style="background:rgba(26,115,232,0.1); color:#1a73e8;">{{ period() }}</span>
-        </div>
+    <!-- Currency rows: each row is a white input-like row, cells split by full-height "|" -->
+    <div class="mb-5 space-y-5 page-content-x">
+      @for (currency of currencies(); track currency.code) {
+        <button
+          (click)="selectCurrency(currency)"
+          class="currency-row"
+          [class.is-active]="selected().code === currency.code">
 
-        <!-- Bars (re-animate via barKey() changing) -->
-        <div class="flex items-end gap-4 h-28 px-2 mb-2">
-          @for (currency of currencies(); track currency.code + '-' + barKey()) {
-            <div class="flex-1 flex flex-col items-center gap-2">
-              <div class="w-full rounded-2xl bar-animate"
-                   [style.height.px]="barHeights()[currency.code]"
-                   style="background:linear-gradient(180deg,#5b9ef7,#1a73e8); box-shadow:0 4px 12px rgba(26,115,232,0.25);">
-              </div>
-              <span class="text-xs font-semibold tabular-nums" style="color:#94a8c5;">{{ currency.code }}</span>
+          <div class="cell text-2xl font-bold">{{ currency.code }}</div>
+
+          <div class="cell tabular-nums">
+            <div class="flex items-center justify-center gap-1.5">
+              <span class="text-base arrow">{{ currency.changePercent >= 0 ? '↑' : '↓' }}</span>
+              <span class="text-xl font-bold">{{ (currency.rate * 0.993) | number:'1.3-3' }}</span>
             </div>
-          }
+            <span class="text-xs opacity-75">
+              {{ currency.changePercent >= 0 ? '+' : '' }}{{ (currency.rate * 0.993 * currency.changePercent / 100) | number:'1.2-2' }}
+            </span>
+          </div>
+
+          <div class="cell tabular-nums">
+            <div class="flex items-center justify-center gap-1.5">
+              <span class="text-base arrow">{{ currency.changePercent >= 0 ? '↑' : '↓' }}</span>
+              <span class="text-xl font-bold">{{ (currency.rate * 1.007) | number:'1.3-3' }}</span>
+            </div>
+            <span class="text-xs opacity-75">
+              {{ currency.changePercent >= 0 ? '+' : '' }}{{ (currency.rate * 1.007 * currency.changePercent / 100) | number:'1.2-2' }}
+            </span>
+          </div>
+        </button>
+      }
+    </div>
+
+    <!-- Chart section (collapsable, deep blue, fills remaining space) -->
+    <div class="chart-card">
+      <button type="button"
+              (click)="toggleChart()"
+              class="chart-toggle-btn w-full flex items-center justify-between"
+              aria-label="Toggle chart">
+        <p class="text-xl font-bold text-white">{{ placeholder.chartTitle }}</p>
+        <ion-icon name="chevron-down-outline"
+                  class="text-white icon-lg chevron"
+                  [class.is-open]="chartOpen()"></ion-icon>
+      </button>
+
+      @if (chartOpen()) {
+        <!-- Bars: paired (6 pairs × 2 bars), 40px each, 5px in-pair, 40px between pairs.
+             Full-width scroll container; rest scrolls horizontally. Scrollbar hidden. -->
+        <div class="chart-scroll-wrapper mt-4 mb-3 overflow-x-auto chart-scroll">
+          <div class="chart-bars-row flex items-stretch h-full">
+            @for (pair of chartPairs(); track $index + '-' + barKey()) {
+              <div class="chart-bar-pair flex items-end">
+                <div class="bar-animate chart-bar" [style.height.px]="pair[0] * maxBarHeightPx"></div>
+                <div class="bar-animate chart-bar" [style.height.px]="pair[1] * maxBarHeightPx"></div>
+              </div>
+            }
+          </div>
         </div>
 
-        <!-- Sparkline of selected currency for the period -->
-        <div class="mt-3 rounded-xl overflow-hidden" style="height:60px; background:rgba(26,115,232,0.04);">
-          <svg viewBox="0 0 200 60" class="w-full h-full" preserveAspectRatio="none">
-            <defs>
-              <linearGradient id="cGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%"   stop-color="#1a73e8" stop-opacity="0.25"/>
-                <stop offset="100%" stop-color="#1a73e8" stop-opacity="0"/>
-              </linearGradient>
-            </defs>
-            <path [attr.d]="chartFillPath()" fill="url(#cGrad)"/>
-            <path [attr.d]="chartLinePath()" fill="none" stroke="#1a73e8" stroke-width="2"
-                  stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </div>
-
-        <!-- Period pills (wired to service) -->
-        <div class="flex gap-2 mt-3">
-          @for (p of periods; track p) {
-            <button
-              (click)="setPeriod(p)"
-              class="flex-1 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 active:scale-95"
-              [style.background]="period() === p ? '#1a73e8' : 'rgba(26,115,232,0.08)'"
-              [style.color]="period() === p ? 'white' : '#94a8c5'">
-              {{ p }}
-            </button>
+        <!-- Legend (text only, no bullets, 3 equal columns across full width) -->
+        <div class="grid grid-cols-3 mt-2">
+          @for (label of placeholder.triadLabels; track label) {
+            <span class="text-base font-semibold text-center text-white">{{ label }}</span>
           }
         </div>
-      </div>
+      }
     </div>
 
   </div>

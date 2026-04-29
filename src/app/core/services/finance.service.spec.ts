@@ -90,6 +90,6 @@ describe('FinanceService', () => {
     const card1 = service.cards().find((c) => c.id === 'card-1');
     const card2 = service.cards().find((c) => c.id === 'card-2');
     expect(card1?.amount).toBeLessThanOrEqual(2000);
-    expect(card2?.amount).toBeGreaterThanOrEqual(0);
+    expect(card2?.amount).toBeGreaterThanOrEqual(100);
   });
 });

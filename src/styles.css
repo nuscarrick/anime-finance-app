@@ -22,14 +22,14 @@
   * { box-sizing: border-box; }
 
   body {
-    background-color: var(--color-bg-primary);
+    background: linear-gradient(160deg, #d4e8f9 0%, #b8d4f0 55%, #93b8e6 100%) fixed;
     color: var(--color-text-primary);
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     margin: 0;
     padding: 0;
   }
 
-  ion-app { background: var(--color-bg-primary); }
+  ion-app { background-color: transparent; }
   ion-content { --background: transparent; }
 
   /* Desktop-only: keep Ionic's ion-app filling the viewport (don't fight
@@ -37,18 +37,14 @@
      constrain only the visible content layers: the .bg-app wrapper that
      each page renders inside ion-content, and the bottom tab bar. */
   @media (min-width: 768px) {
-    body {
-      background: linear-gradient(135deg, #cfe1f6 0%, #8aa6c6 100%);
-    }
+    /* Clamp the page-content frame to 414px on desktop. The body gradient
+       (background-attachment: fixed) spans the full viewport, so the tab-bar's
+       rounded-corner cutouts still reveal a matching gradient even though
+       .bg-app is narrower than the viewport. */
     .bg-app {
-      max-width: 480px;
+      max-width: 414px;
       margin-left: auto;
       margin-right: auto;
-      box-shadow: 0 0 60px rgba(26, 115, 232, 0.25);
-    }
-    ion-tab-bar {
-      width: 480px;
-      align-self: center;
     }
   }
 }
@@ -85,8 +81,394 @@
   }
 
   .bg-app {
-    background: linear-gradient(160deg, #e8f4ff 0%, #d4eafe 60%, #c8e0ff 100%);
     min-height: 100%;
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+  }
+  /* Decorative organic blobs behind content (matches mockup background). */
+  .bg-app::before,
+  .bg-app::after {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    border-radius: 50%;
+    filter: blur(40px);
+    opacity: 0.55;
+    pointer-events: none;
+  }
+  .bg-app::before {
+    width: 280px; height: 280px;
+    top: -60px; right: -80px;
+    background: radial-gradient(circle at 30% 30%, #ffffff 0%, #c8e0fa 45%, transparent 70%);
+    opacity: 0.8;
+  }
+  .bg-app::after {
+    width: 340px; height: 340px;
+    bottom: -100px; left: -110px;
+    background: radial-gradient(circle at 60% 40%, #e0eeff 0%, #6fa3e8 50%, transparent 75%);
+    opacity: 0.7;
+  }
+
+  /* 3-pill segmented control (matches mockup tab strips). */
+  .pill-group {
+    display: flex;
+    gap: 8px;
+    padding: 4px;
+    background: linear-gradient(135deg, #1a73e8, #5b9ef7);
+    border: 1px solid rgba(26, 115, 232, 0.5);
+    border-radius: 9999px;
+    box-shadow: 0 6px 16px rgba(26, 115, 232, 0.25);
+  }
+  .pill {
+    flex: 1;
+    padding: 8px 14px;
+    border-radius: 9999px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: #ffffff;
+    background: transparent;
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+  }
+  .pill.is-active {
+    background: #ffffff;
+    color: #1a73e8;
+    box-shadow: 0 4px 12px rgba(26, 115, 232, 0.18);
+  }
+  /* Larger variant of the pill segmented control (used on Analytics) */
+  .pill-group--lg { padding: 6px; gap: 10px; }
+  .pill-group--lg .pill {
+    padding: 14px 18px;
+    font-size: 14px;
+  }
+
+  /* Brand text colors */
+  .text-navy  { color: #1e2d5a; }
+  .text-muted { color: #94a8c5; }
+  .text-blue  { color: #1a73e8; }
+
+  /* Page-level paddings */
+  .page-header {
+    padding-top: 33px;
+    padding-left: 44px;
+    padding-right: 44px;
+  }
+  .page-content-x { padding-left: 33px; padding-right: 33px; }
+
+  /* 66px white-glass circular header button (back / menu / settings) */
+  .btn-circle-66 {
+    width: 66px;
+    height: 66px;
+    border-radius: 9999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.85);
+    box-shadow: 0 2px 10px rgba(26, 115, 232, 0.12);
+    transition: transform 0.15s ease;
+    border: 0;
+  }
+  .btn-circle-66:active { transform: scale(0.9); }
+
+  /* Avatar with blue gradient ring (66px outer, 62px image inside) */
+  .avatar-ring {
+    width: 66px;
+    height: 66px;
+    padding: 2px;
+    border-radius: 9999px;
+    background: linear-gradient(135deg, #1a73e8, #5b9ef7);
+    flex-shrink: 0;
+  }
+  .avatar-ring > img {
+    width: 62px;
+    height: 62px;
+    border-radius: 9999px;
+    border: 2px solid white;
+    display: block;
+    object-fit: cover;
+  }
+
+  /* Three blue dots inside the menu button */
+  .menu-dots {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .menu-dots > span {
+    display: block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #1a73e8;
+  }
+
+  /* Pill-style input row (rounded 12px white-glass) */
+  .input-pill {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    border-radius: 12px;
+    box-shadow: 0 4px 14px rgba(26, 115, 232, 0.08);
+  }
+
+  /* Tall pill CTA button (uppercase, blue gradient) */
+  .cta-pill {
+    border-radius: 9999px;
+    padding: 16px 24px;
+    font-weight: 700;
+    color: white;
+    font-size: 17px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    background: linear-gradient(135deg, #1a73e8, #5b9ef7);
+    box-shadow: 0 10px 24px rgba(26, 115, 232, 0.4);
+    transition: transform 0.15s ease;
+    border: 0;
+  }
+  .cta-pill:active { transform: scale(0.95); }
+
+  /* Vertical slider's white pill background */
+  .slider-pill {
+    width: 32px;
+    padding: 12px 0;
+    border-radius: 9999px;
+    background: rgba(255, 255, 255, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    box-shadow: 0 4px 14px rgba(26, 115, 232, 0.10);
+  }
+
+  /* Tick scale row (dash + value) on the slider */
+  .tick-row { display: flex; align-items: center; gap: 15px; }
+  .tick-dash { display: block; width: 24px; height: 2px; background: #1a73e8; }
+
+  /* Currency table row (3-column with full-height vertical separators) */
+  .currency-row {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    align-items: stretch;
+    height: 90px;
+    border-radius: 12px;
+    overflow: hidden;
+    text-align: left;
+    background: rgba(255, 255, 255, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    color: #1e2d5a;
+    box-shadow: 0 4px 14px rgba(26, 115, 232, 0.08);
+    transition: all 0.2s;
+  }
+  .currency-row.is-active {
+    background: #1a73e8;
+    border-color: #1a73e8;
+    color: #ffffff;
+  }
+  .currency-row > .cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: inherit;
+    border-right: 1px solid currentColor;
+  }
+  .currency-row > .cell:last-child { border-right: none; }
+  .currency-row .arrow { color: #1a73e8; }
+  .currency-row.is-active .arrow { color: #ffffff; }
+
+  /* Login screen */
+  .login-shell {
+    background: linear-gradient(160deg, #e8f4ff 0%, #d4eafe 60%, #c8e0ff 100%);
+  }
+  .login-orb {
+    position: absolute;
+    border-radius: 9999px;
+    pointer-events: none;
+    animation: float 6s ease-in-out infinite;
+  }
+  .login-orb--top {
+    top: 25%;
+    left: -4rem;
+    width: 16rem;
+    height: 16rem;
+    background: rgba(26, 115, 232, 0.12);
+    filter: blur(48px);
+  }
+  .login-orb--bottom {
+    bottom: 25%;
+    right: -4rem;
+    width: 14rem;
+    height: 14rem;
+    background: rgba(91, 158, 247, 0.15);
+    filter: blur(40px);
+    animation: float 8s ease-in-out infinite reverse;
+  }
+  .login-logo {
+    background: linear-gradient(135deg, #1a73e8, #5b9ef7);
+    box-shadow: 0 12px 32px rgba(26, 115, 232, 0.35);
+  }
+  .login-eye-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+  .login-error {
+    background: rgba(244, 67, 54, 0.08);
+    border: 1px solid rgba(244, 67, 54, 0.25);
+    color: #f44336;
+  }
+  .login-submit {
+    background: linear-gradient(135deg, #1a73e8, #5b9ef7);
+    box-shadow: 0 8px 24px rgba(26, 115, 232, 0.35);
+  }
+  .login-submit:disabled { opacity: 0.55; }
+  .login-submit.is-pressing { transform: scale(0.97); }
+  .login-spinner {
+    color: white;
+    width: 20px;
+    height: 20px;
+  }
+
+  /* Header pop-over menu (dropdown shown when clicking the dots/back button) */
+  .menu-popover {
+    position: absolute;
+    right: 0;
+    border-radius: 1rem;
+    overflow: hidden;
+    background: white;
+    box-shadow: 0 8px 24px rgba(26, 115, 232, 0.15);
+    border: 1px solid rgba(26, 115, 232, 0.08);
+    min-width: 160px;
+    z-index: 50;
+  }
+  .menu-popover button {
+    width: 100%;
+    padding: 12px 16px;
+    text-align: left;
+    font-size: 14px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    border: 0;
+    color: #1e2d5a;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .menu-popover button:disabled {
+    color: #c0cfe0;
+    cursor: default;
+  }
+  .menu-popover button.is-danger {
+    color: #f44336;
+    border-top: 1px solid rgba(26, 115, 232, 0.06);
+  }
+
+  /* Icon sizes */
+  .icon-sm { font-size: 16px; }
+  .icon-md { font-size: 18px; }
+  .icon-lg { font-size: 20px; }
+  .icon-xl { font-size: 28px; }
+
+  /* Chevron rotation toggle (used by chart-card collapse header) */
+  .chevron { transition: transform 0.2s; }
+  .chevron.is-open { transform: rotate(180deg); }
+
+  /* Donut wrapper (glassmorphic disc behind the SVG donut) */
+  .donut-wrap {
+    width: 260px;
+    height: 260px;
+    position: relative;
+    flex-shrink: 0;
+    border-radius: 9999px;
+    background: rgba(255, 255, 255, 0.45);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    box-shadow: 0 12px 32px rgba(26, 115, 232, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  }
+
+  /* Dot indicators (8x8 round, blue → white when active) */
+  .dot-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 9999px;
+    background: #1a73e8;
+    transition: all 0.2s;
+    border: 0;
+  }
+  .dot-indicator.is-active {
+    background: #ffffff;
+    box-shadow: 0 2px 6px rgba(26, 115, 232, 0.35);
+  }
+
+  /* "From card" context banner shown on currency when navigated from a card. */
+  .from-card-banner {
+    background: rgba(26, 115, 232, 0.08);
+    border: 1px solid rgba(26, 115, 232, 0.18);
+  }
+  .from-card-banner-close {
+    background: rgba(255, 255, 255, 0.7);
+    border: 0;
+  }
+
+  /* Chart-card collapse toggle button (transparent, no border) */
+  .chart-toggle-btn {
+    background: transparent;
+    border: 0;
+  }
+
+  /* Chart card on currency page (deep blue, fills remaining space) */
+  .chart-card {
+    flex: 1 1 0;
+    min-width: 0;
+    min-height: 240px;
+    display: flex;
+    flex-direction: column;
+    border-radius: 16px 16px 0 0;
+    padding: 18px 20px 124px 20px;
+    background: linear-gradient(180deg, #1a73e8, #0c4ea2);
+    box-shadow: 0 -4px 16px rgba(12, 78, 162, 0.25);
+    overflow: hidden;
+  }
+  .chart-bar {
+    width: 40px;
+    background: linear-gradient(180deg, #ffffff 0%, #ffffff 30%, #5b9ef7 100%);
+  }
+
+  /* Horizontal scroll wrapper inside the chart card (scrollbar hidden via .chart-scroll) */
+  .chart-scroll-wrapper {
+    flex: 1 1 auto;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    -webkit-overflow-scrolling: touch;
+  }
+  .chart-bars-row {
+    min-height: 200px;
+    gap: 40px;
+    width: max-content;
+  }
+  .chart-bar-pair { gap: 5px; }
+
+  /* Code badge on currency rows (USD / EUR / GBP). */
+  .code-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 56px;
+    height: 36px;
+    padding: 0 10px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 800;
+    color: white;
+    letter-spacing: 0.04em;
+    background: linear-gradient(135deg, #1a73e8 0%, #5b9ef7 100%);
+    box-shadow: 0 4px 10px rgba(26, 115, 232, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.35);
   }
 
   .slider-panel {
@@ -187,6 +569,13 @@
 .donut-seg:nth-of-type(4) { animation-delay: 360ms; }
 .donut-seg:nth-of-type(5) { animation-delay: 480ms; }
 
+/* Hide scrollbar on horizontal chart scroll while keeping scroll */
+.chart-scroll {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.chart-scroll::-webkit-scrollbar { display: none; }
+
 /* Number input — hide spinner arrows (Chrome/Safari/Firefox) */
 .no-spin::-webkit-outer-spin-button,
 .no-spin::-webkit-inner-spin-button {
@@ -194,6 +583,10 @@
   margin: 0;
 }
 .no-spin { -moz-appearance: textfield; appearance: textfield; }
+
+/* Dark placeholder for the home input (matches mockup) */
+.no-spin::placeholder { color: #1e2d5a; opacity: 1; }
+.no-spin::-webkit-input-placeholder { color: #1e2d5a; }
 
 /* Scrollbar */
 ::-webkit-scrollbar       { width: 4px; }
@@ -217,15 +610,50 @@
 
 /* Ion overrides */
 ion-tab-bar {
-  --background: rgba(255, 255, 255, 0.85);
-  --border: 1px solid rgba(26, 115, 232, 0.12);
-  backdrop-filter: blur(12px);
+  --background: rgba(255, 255, 255, 0.7);
+  --border: 0;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-top: 1px solid rgba(255, 255, 255, 0.7);
+  border-top-left-radius: 24px;
+  border-top-right-radius: 24px;
+  box-shadow: 0 -8px 24px rgba(26, 115, 232, 0.10);
+  min-height: 106px;
+  height: 106px;
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 100;
+}
+
+/* Desktop: clamp tab bar to 414px and center it. Lives outside @layer base
+   so it wins over the unlayered fixed-positioning rule above. */
+@media (min-width: 768px) {
+  ion-tab-bar {
+    width: 414px;
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+  }
+}
+
+ion-tab-button {
+  --padding-top: 31px;
+  --padding-bottom: 31px;
+}
+
+ion-tab-button ion-icon {
+  font-size: 44px !important;
+  width: 44px;
+  height: 44px;
 }
 
 ion-tab-button {
   --color:          #94a8c5;
   --color-selected: #1a73e8;
 }
+
 
 ion-range {
   --bar-background:        rgba(26, 115, 232, 0.15);

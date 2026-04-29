@@ -14,6 +14,7 @@ import {
 import { addIcons } from 'ionicons';
 import { eyeOutline, eyeOffOutline, lockClosedOutline, personOutline } from 'ionicons/icons';
 import { AuthService } from '../../core/services/auth.service';
+import { LOGIN_COPY } from '../../core/constants/ui.constants';
 
 @Component({
   selector: 'app-login',
@@ -42,6 +43,8 @@ import { AuthService } from '../../core/services/auth.service';
   `],
 })
 export class LoginComponent {
+  readonly copy = LOGIN_COPY;
+
   username = signal('');
   password = signal('');
   loading = signal(false);

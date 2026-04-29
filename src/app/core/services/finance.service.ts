@@ -12,6 +12,7 @@ import {
   INITIAL_CARDS,
   INITIAL_ANALYTICS,
 } from '../mocks/finance.mocks';
+import { TIMING } from '../constants/ui.constants';
 
 const SLIDER_STATE_KEY = 'af_slider_state';
 
@@ -20,7 +21,7 @@ export class FinanceService {
   private _currencies = signal<CurrencyRate[]>(INITIAL_CURRENCIES);
   private _cards = signal<ValueCard[]>(INITIAL_CARDS);
   private _analytics = signal<AnalyticsSummary>(INITIAL_ANALYTICS);
-  private _inputAmount = signal<number>(1200);
+  private _inputAmount = signal<number>(0);
   private _period = signal<Period>('1W');
 
   // Per-card slider overrides (keyed by card id). Persisted via effect().
@@ -81,7 +82,7 @@ export class FinanceService {
     });
 
     // Simulate real-time currency updates every 3s.
-    interval(3000)
+    interval(TIMING.currencyRefreshIntervalMs)
       .pipe(takeUntilDestroyed())
       .subscribe(() => this.updateCurrencyRates());
   }
@@ -109,7 +110,7 @@ export class FinanceService {
       const parsed = JSON.parse(raw) as Record<string, number>;
       // Clamp persisted values to current slider range (max was recently lowered).
       return Object.fromEntries(
-        Object.entries(parsed).map(([k, v]) => [k, Math.max(0, Math.min(2000, v))])
+        Object.entries(parsed).map(([k, v]) => [k, Math.max(100, Math.min(2000, v))])
       );
     } catch {
       return {};
