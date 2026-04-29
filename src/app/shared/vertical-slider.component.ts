@@ -38,16 +38,17 @@ type Accent = 'blue' | 'red';
       justify-content: center;
     }
     .vslider-hit:focus-visible .vslider-rail {
-      box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.25);
+      box-shadow: 0 0 0 3px rgba(16, 159, 253, 0.25);
     }
     .vslider-hit:active { cursor: grabbing; }
     .vslider-rail {
       position: relative;
-      width: 10px;
+      width: 8px;
       height: 100%;
       border-radius: 999px;
-      background: rgba(26, 115, 232, 0.10);
-      border: 1px solid rgba(26, 115, 232, 0.14);
+      background: rgba(16, 159, 253, 0.12);
+      border: 1px solid rgba(16, 159, 253, 0.18);
+      box-shadow: inset 0 1px 3px rgba(16, 159, 253, 0.10);
       overflow: hidden;
     }
     .vslider-fill {
@@ -58,7 +59,7 @@ type Accent = 'blue' | 'red';
       transition: height 120ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
     }
     .vslider-hit[data-accent="blue"] .vslider-fill {
-      background: linear-gradient(180deg, #5b9ef7, #1a73e8);
+      background: linear-gradient(180deg, #16aafe, #109ffd);
     }
     .vslider-hit[data-accent="red"] .vslider-fill {
       background: linear-gradient(180deg, #ff7c6e, #f44336);
@@ -66,12 +67,12 @@ type Accent = 'blue' | 'red';
     .vslider-thumb {
       position: absolute;
       left: 50%;
-      width: 20px;
-      height: 20px;
+      width: 24px;
+      height: 24px;
       border-radius: 50%;
-      background: #ffffff;
-      border: 3px solid #1a73e8;
-      box-shadow: 0 3px 8px rgba(26, 115, 232, 0.4), 0 1px 2px rgba(0, 0, 0, 0.08);
+      background: linear-gradient(135deg, #109ffd, #16aafe);
+      border: none;
+      box-shadow: 0 3px 8px rgba(16, 159, 253, 0.5), 0 1px 2px rgba(0, 0, 0, 0.08);
       transform: translate(-50%, 50%);
       pointer-events: none;
       transition: transform 120ms, bottom 120ms cubic-bezier(0.25, 0.46, 0.45, 0.94);

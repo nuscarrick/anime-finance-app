@@ -1,6 +1,7 @@
 import { ErrorHandler, Injectable, inject } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ToastController } from '@ionic/angular/standalone';
+import { TIMING } from '../constants/ui.constants';
 
 @Injectable({ providedIn: 'root' })
 export class GlobalErrorHandler implements ErrorHandler {
@@ -26,7 +27,7 @@ export class GlobalErrorHandler implements ErrorHandler {
     void this.toastCtrl
       .create({
         message,
-        duration: 2500,
+        duration: TIMING.toastDurationMs,
         position: 'top',
         color: 'danger',
       })

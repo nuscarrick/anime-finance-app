@@ -14,6 +14,7 @@ import {
 import { addIcons } from 'ionicons';
 import { eyeOutline, eyeOffOutline, lockClosedOutline, personOutline } from 'ionicons/icons';
 import { AuthService } from '../../core/services/auth.service';
+import { LOGIN_COPY } from '../../core/constants/ui.constants';
 
 @Component({
   selector: 'app-login',
@@ -27,21 +28,23 @@ import { AuthService } from '../../core/services/auth.service';
       50%       { transform: translateY(-18px); }
     }
     .login-field {
-      background: rgba(26, 115, 232, 0.06);
-      border: 1.5px solid rgba(26, 115, 232, 0.18);
-      color: #1e2d5a;
+      background: rgba(16, 159, 253, 0.06);
+      border: 1.5px solid rgba(16, 159, 253, 0.18);
+      color: #10172a;
       transition: border-color 160ms ease, box-shadow 160ms ease;
     }
     .login-field::placeholder { color: #b0c4d8; }
     .login-field:focus,
     .login-field:focus-visible {
-      border-color: rgba(26, 115, 232, 0.6);
-      box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.12);
+      border-color: rgba(16, 159, 253, 0.6);
+      box-shadow: 0 0 0 3px rgba(16, 159, 253, 0.12);
       outline: none;
     }
   `],
 })
 export class LoginComponent {
+  readonly copy = LOGIN_COPY;
+
   username = signal('');
   password = signal('');
   loading = signal(false);

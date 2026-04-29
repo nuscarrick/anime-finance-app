@@ -25,9 +25,12 @@ import { FinanceService } from '../../core/services/finance.service';
 import { ValueCard } from '../../core/models/finance.model';
 import { VerticalSliderComponent } from '../../shared/vertical-slider.component';
 import { environment } from '../../../environments/environment';
-
-const SLIDER_MIN = 0;
-const SLIDER_MAX = 2000;
+import {
+  PLACEHOLDER,
+  SLIDER_RANGE,
+  SLIDER_TICKS,
+  TIMING,
+} from '../../core/constants/ui.constants';
 
 @Component({
   selector: 'app-home',
@@ -42,8 +45,10 @@ export class HomeComponent {
   router = inject(Router);
   private toastCtrl = inject(ToastController);
 
-  readonly SLIDER_MIN = SLIDER_MIN;
-  readonly SLIDER_MAX = SLIDER_MAX;
+  readonly SLIDER_MIN = SLIDER_RANGE.min;
+  readonly SLIDER_MAX = SLIDER_RANGE.max;
+  readonly SLIDER_STEP = SLIDER_RANGE.step;
+  readonly placeholder = PLACEHOLDER;
   readonly defaultAvatar = `${environment.apiBaseUrl}/icon/emilys/128`;
 
   user = this.auth.user;
@@ -52,7 +57,7 @@ export class HomeComponent {
   totalBalance = this.finance.totalBalance;
   portfolioTrendPct = this.finance.portfolioTrendPct;
 
-  private _tick = toSignal(interval(60_000).pipe(map(() => Date.now())));
+  private _tick = toSignal(interval(TIMING.greetingTickMs).pipe(map(() => Date.now())));
 
   greeting = computed(() => {
     this._tick();
@@ -65,7 +70,7 @@ export class HomeComponent {
   slidersModified = computed(() => Object.keys(this.finance.sliderValues()).length > 0);
 
   showMenu = signal(false);
-  scaleMarks = [2000, 1500, 1000, 500, 0];
+  readonly scaleMarks = SLIDER_TICKS;
 
   constructor() {
     addIcons({
@@ -108,7 +113,7 @@ export class HomeComponent {
   async onTransfer() {
     const t = await this.toastCtrl.create({
       message: `Transferring $${this.inputAmount().toLocaleString()}…`,
-      duration: 1800,
+      duration: TIMING.transferToastDurationMs,
       position: 'top',
       cssClass: 'af-toast',
       icon: 'arrow-forward-outline',

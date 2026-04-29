@@ -64,11 +64,10 @@ export const INITIAL_CARDS: ValueCard[] = [
 export const INITIAL_ANALYTICS: AnalyticsSummary = {
   totalIncome: 5400,
   totalExpense: 1700,
-  netBalance: 3700,
+  netBalance: 3075,
   categories: [
-    { name: 'Housing', amount: 800, color: '#6c63ff', percentage: 47 },
-    { name: 'Food', amount: 350, color: '#ff6584', percentage: 21 },
-    { name: 'Transport', amount: 280, color: '#43e97b', percentage: 16 },
-    { name: 'Other', amount: 270, color: '#f9a825', percentage: 16 },
+    { name: 'Housing', amount: 539, color: '#109ffd', percentage: 49 },
+    { name: 'Food', amount: 367, color: '#a8c8f0', percentage: 34 },
+    { name: 'Other', amount: 187, color: '#ffffff', percentage: 17 },
   ],
 };

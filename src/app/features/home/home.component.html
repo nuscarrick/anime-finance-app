@@ -1,52 +1,41 @@
 <ion-content (click)="showMenu.set(false)">
-  <div class="bg-app pb-28 slide-from-left">
+  <div class="bg-app slide-from-left">
 
-    <!-- Header: logo + user info | "..." menu -->
-    <div class="flex items-center justify-between px-5 pt-6 pb-3">
+    <!-- Header: avatar (66px, blue ring) + name + subtitle | "..." in 66px glass circle -->
+    <div class="flex items-center justify-between page-header">
       <div class="flex items-center gap-3 min-w-0">
         @defer (on idle) {
-          <div class="relative flex-shrink-0">
-            <img [src]="user()?.image || defaultAvatar"
-                 class="w-11 h-11 rounded-full object-cover"
-                 style="border: 2.5px solid #1a73e8; box-shadow: 0 0 0 4px rgba(26,115,232,0.15);"
-                 alt="avatar" />
-            <div class="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-green-400"
-                 style="border: 2px solid white;"></div>
+          <div class="avatar-ring">
+            <img [src]="user()?.image || defaultAvatar" alt="avatar" />
           </div>
         } @placeholder {
-          <div class="skeleton w-11 h-11 rounded-full flex-shrink-0"></div>
+          <div class="skeleton avatar-ring"></div>
         }
         <div class="min-w-0">
-          <p class="text-xs font-medium truncate" style="color:#94a8c5;">Good {{ greeting() }},</p>
-          <p class="text-sm font-bold truncate" style="color:#1e2d5a;">{{ user()?.firstName || 'User' }} {{ user()?.lastName || '' }}</p>
+          <p class="text-2xl font-bold truncate text-navy">
+            {{ user()?.firstName || 'User' }} {{ user()?.lastName || '' }}
+          </p>
+          <p class="text-base font-medium truncate mt-1 text-muted">
+            &#64;{{ user()?.username || 'user' }}
+          </p>
         </div>
       </div>
 
       <div class="relative z-50 flex-shrink-0" (click)="$event.stopPropagation()">
-        <button
-          (click)="showMenu.set(!showMenu())"
-          class="w-9 h-9 rounded-full flex items-center justify-center font-bold text-lg transition-all active:scale-90"
-          style="background:rgba(255,255,255,0.8); color:#1e2d5a; letter-spacing:1px; box-shadow:0 2px 8px rgba(26,115,232,0.1);">
-          ···
+        <button (click)="showMenu.set(!showMenu())"
+                class="btn-circle-66"
+                aria-label="Menu">
+          <span class="menu-dots"><span></span><span></span><span></span></span>
         </button>
         @if (showMenu()) {
-          <div class="absolute right-0 top-11 rounded-2xl overflow-hidden menu-pop"
-               style="background:white; box-shadow:0 8px 24px rgba(26,115,232,0.15); min-width:150px; border:1px solid rgba(26,115,232,0.08);">
-            <button
-              (click)="resetSliders(); showMenu.set(false)"
-              [disabled]="!slidersModified()"
-              class="w-full px-4 py-3 text-left text-sm font-semibold transition-all flex items-center gap-2"
-              [class.hover:bg-blue-50]="slidersModified()"
-              [style.color]="slidersModified() ? '#1e2d5a' : '#c0cfe0'"
-              [style.cursor]="slidersModified() ? 'pointer' : 'default'">
-              <ion-icon name="refresh-outline" style="font-size:16px;"></ion-icon>
+          <div class="menu-popover menu-pop top-20">
+            <button (click)="resetSliders(); showMenu.set(false)"
+                    [disabled]="!slidersModified()">
+              <ion-icon name="refresh-outline" class="icon-sm"></ion-icon>
               Reset Sliders
             </button>
-            <button
-              (click)="signOut()"
-              class="w-full px-4 py-3 text-left text-sm font-semibold transition-all hover:bg-red-50 flex items-center gap-2"
-              style="color:#f44336; border-top:1px solid rgba(26,115,232,0.06);">
-              <ion-icon name="log-out-outline" style="font-size:16px;"></ion-icon>
+            <button (click)="signOut()" class="is-danger">
+              <ion-icon name="log-out-outline" class="icon-sm"></ion-icon>
               Sign Out
             </button>
           </div>
@@ -54,101 +43,74 @@
       </div>
     </div>
 
-    <!-- Total Portfolio -->
-    <div class="px-5 mb-5">
-      <p class="text-xs font-semibold uppercase tracking-wider mb-1" style="color:#94a8c5;">Total Portfolio</p>
-      <div class="flex items-end gap-2 flex-wrap">
-        <span class="text-4xl font-black tabular-nums" style="color:#1e2d5a;">${{ totalBalance() | number:'1.0-0' }}</span>
-        <span class="text-sm mb-1.5 font-semibold"
-              [style.color]="portfolioTrendPct() >= 0 ? '#22c55e' : '#f44336'">
-          {{ portfolioTrendPct() >= 0 ? '+' : '' }}{{ portfolioTrendPct() }}%
-        </span>
-      </div>
-    </div>
-
-    <!-- Input -->
-    <div class="px-5 mb-5">
-      <div class="glass-card flex items-center px-4 py-3 gap-2">
-        <span class="text-base font-bold" style="color:#1a73e8;">$</span>
+    <!-- Input field (less rounded, no currency suffix, mockup placeholder) -->
+    <div class="page-content-x mt-[54px] mb-[37px]">
+      <div class="input-pill">
         <input
           type="number"
           min="0"
           step="1"
           inputmode="numeric"
-          [value]="inputAmount()"
+          [value]="inputAmount() || ''"
           (input)="onInputChange($event)"
           (keydown)="blockNonPositiveKeys($event)"
-          class="no-spin flex-1 text-lg font-semibold outline-none bg-transparent min-w-0"
-          style="color:#1e2d5a;"
-          placeholder="0"
+          class="no-spin flex-1 text-base font-semibold outline-none bg-transparent min-w-0 text-navy"
+          [placeholder]="placeholder.inputAmount"
         />
-        <span class="text-sm font-semibold" style="color:#94a8c5;">USD</span>
       </div>
     </div>
 
-    <!-- Value Cards -->
-    <div class="px-5 mb-5">
-      <div class="grid grid-cols-2 gap-3">
+    <!-- Value Cards: $amount + small subtitle -->
+    <div class="mb-5 page-content-x">
+      <div class="grid grid-cols-2 gap-[35px]">
         @for (card of cards(); track card.id) {
           <button
-            class="rounded-2xl p-4 text-left transition-all duration-200 active:scale-95"
-            [class]="card.id === 'card-1' ? 'gradient-card-1' : 'gradient-card-2'"
+            class="glass-card p-4 text-center transition-all duration-200 active:scale-95 rounded-xl"
             (click)="navigateToCurrency(card)">
-            <p class="text-xs font-medium mb-2 opacity-80 text-white truncate">{{ card.label }}</p>
-            <p class="text-2xl font-black text-white mb-1 tabular-nums">${{ card.amount | number:'1.0-0' }}</p>
-            <div class="flex items-center gap-1">
-              <ion-icon
-                [name]="card.trend === 'up' ? 'trending-up-outline' : 'trending-down-outline'"
-                style="font-size:13px; color:white; opacity:0.85;"></ion-icon>
-              <span class="text-xs text-white opacity-80">{{ card.trendPercent }}%</span>
-            </div>
+            <p class="text-2xl font-black mb-1 tabular-nums text-navy">
+              ${{ card.amount | number:'1.0-0' }}
+            </p>
+            <p class="text-[11px] font-medium truncate text-muted">{{ placeholder.cardSubtitle }}</p>
           </button>
         }
       </div>
     </div>
 
-    <!-- Vertical sliders: each slider has its own scale column -->
-    <div class="px-5 mb-5">
-      <div class="slider-panel p-4">
-        <div class="grid grid-cols-2 gap-4" style="height:220px;">
-          @for (card of cards(); track card.id; let i = $index) {
-            <div class="flex items-stretch gap-2">
-              <div class="flex flex-col justify-between items-end py-1" style="width:30px;">
-                @for (m of scaleMarks; track m) {
-                  <span class="text-[10px] tabular-nums" style="color:#94a8c5;">{{ m }}</span>
-                }
-              </div>
-
-              <div class="flex-1 flex flex-col items-center gap-2 min-w-0">
-                <div class="flex-1 w-10">
-                  <app-vertical-slider
-                    [value]="card.amount"
-                    [min]="SLIDER_MIN"
-                    [max]="SLIDER_MAX"
-                    [step]="10"
-                    [accent]="i === 0 ? 'blue' : 'red'"
-                    [ariaLabel]="card.label + ' amount'"
-                    (valueChange)="onSliderChange(card.id, $event)" />
-                </div>
-                <p class="text-xs font-bold tabular-nums"
-                   [style.color]="i === 0 ? '#1a73e8' : '#f44336'">
-                  ${{ card.amount | number:'1.0-0' }}
-                </p>
+    <!-- Vertical sliders: tick scale (with dashes) on the right of each -->
+    <div class="page-content-x">
+      <div class="grid grid-cols-2 gap-[35px] h-[240px]">
+        @for (card of cards(); track card.id) {
+          <div class="flex items-stretch gap-3">
+            <div class="flex justify-center pl-[15px]">
+              <div class="slider-pill">
+                <app-vertical-slider
+                  [value]="card.amount"
+                  [min]="SLIDER_MIN"
+                  [max]="SLIDER_MAX"
+                  [step]="SLIDER_STEP"
+                  accent="blue"
+                  [ariaLabel]="card.label + ' amount'"
+                  (valueChange)="onSliderChange(card.id, $event)" />
               </div>
             </div>
-          }
-        </div>
+
+            <div class="flex-1 flex flex-col justify-between py-1">
+              @for (m of scaleMarks; track m) {
+                <div class="tick-row">
+                  <span class="tick-dash"></span>
+                  <span class="text-base font-semibold tabular-nums text-navy">{{ m }}</span>
+                </div>
+              }
+            </div>
+          </div>
+        }
       </div>
     </div>
 
-    <!-- CTA -->
-    <div class="px-5">
-      <button
-        class="w-full py-4 rounded-2xl font-bold text-white text-base flex items-center justify-center gap-2 transition-all duration-200 active:scale-95 pulse-glow"
-        style="background:linear-gradient(135deg,#1a73e8,#5b9ef7);"
-        (click)="onTransfer()">
-        Send Money
-        <ion-icon name="arrow-forward-outline" style="font-size:18px;"></ion-icon>
+    <!-- CTA: pill button sized to text + 24px horizontal padding -->
+    <div class="flex justify-center mt-[48px] pb-[120px]">
+      <button class="cta-pill pulse-glow active:scale-95" (click)="onTransfer()">
+        {{ placeholder.ctaLabel }}
       </button>
     </div>
 
