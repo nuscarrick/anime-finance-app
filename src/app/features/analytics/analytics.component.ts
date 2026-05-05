@@ -8,7 +8,7 @@ import {
 import { DecimalPipe, Location } from '@angular/common';
 import { IonContent, IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { settingsOutline, arrowBackOutline } from 'ionicons/icons';
+import { settingsOutline, chevronBackOutline } from 'ionicons/icons';
 import { FinanceService } from '../../core/services/finance.service';
 import { DONUT, PLACEHOLDER } from '../../core/constants/ui.constants';
 
@@ -70,7 +70,7 @@ export class AnalyticsComponent {
   });
 
   constructor() {
-    addIcons({ settingsOutline, arrowBackOutline });
+    addIcons({ settingsOutline, chevronBackOutline });
   }
 
   goBack() {

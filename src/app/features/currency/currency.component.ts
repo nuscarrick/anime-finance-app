@@ -14,7 +14,7 @@ import { addIcons } from 'ionicons';
 import {
   trendingUpOutline,
   trendingDownOutline,
-  arrowBackOutline,
+  chevronBackOutline,
   logOutOutline,
   closeOutline,
   chevronDownOutline,
@@ -104,7 +104,7 @@ export class CurrencyComponent {
     addIcons({
       trendingUpOutline,
       trendingDownOutline,
-      arrowBackOutline,
+      chevronBackOutline,
       logOutOutline,
       closeOutline,
       chevronDownOutline,
